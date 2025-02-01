@@ -201,7 +201,7 @@ export function StudentCheckIn({
     <Card className="bg-background w-full">
       <CardHeader>
         <CardTitle>
-          <h2 className="font-[500] md:text-[1.5rem] text-xl tracking-tight">
+          <h2 className="font-medium text-xl md:text-2xl tracking-tight">
             {t("studentCheckIn")}
           </h2>
         </CardTitle>
