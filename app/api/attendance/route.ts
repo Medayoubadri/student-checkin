@@ -1,17 +1,27 @@
+// app/api/attendance/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
-  const { studentId } = await request.json();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
+    const { studentId } = await request.json();
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const existingAttendance = await prisma.attendance.findFirst({
       where: {
-        studentId,
+        studentId: studentId,
         date: {
           gte: today,
           lt: new Date(today.getTime() + 24 * 60 * 60 * 1000), // Next day
@@ -25,9 +35,10 @@ export async function POST(request: Request) {
         { status: 201 }
       );
     }
+
     const attendance = await prisma.attendance.create({
       data: {
-        studentId,
+        studentId: studentId,
         date: today,
       },
     });

@@ -34,9 +34,15 @@ export default function StudentsPage() {
       }
       const response = await fetch(url);
       const data = await response.json();
-      setStudents(data);
+      if (Array.isArray(data)) {
+        setStudents(data);
+      } else {
+        console.error("Unexpected data format:", data);
+        setStudents([]);
+      }
     } catch (error) {
       console.error("Error fetching students:", error);
+      setStudents([]);
     }
   }, [selectedDate]);
 
@@ -44,7 +50,7 @@ export default function StudentsPage() {
     if (status === "authenticated") {
       fetchStudents();
     }
-  }, [status, fetchStudents, selectedDate]);
+  }, [status, fetchStudents]);
 
   if (status === "loading") {
     return (
@@ -98,7 +104,11 @@ export default function StudentsPage() {
           <ActionsButton onImportComplete={fetchStudents} />
         </div>
       </div>
-      <StudentsTable students={students} searchTerm={searchTerm} />
+      <StudentsTable
+        students={students}
+        searchTerm={searchTerm}
+        selectedDate={selectedDate}
+      />
     </div>
   );
 }

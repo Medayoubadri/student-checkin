@@ -33,7 +33,7 @@ export function ImportStudentsModal({
       toast({
         title: "No file selected",
         description: "Please select a CSV file to import.",
-        variant: "destructive",
+        variant: "warning",
       });
       return;
     }
@@ -51,6 +51,7 @@ export function ImportStudentsModal({
         toast({
           title: "Import successful",
           description: "Students have been imported successfully.",
+          variant: "success",
         });
         onImportComplete();
         onClose();

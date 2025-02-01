@@ -33,9 +33,14 @@ interface Student {
 interface StudentsTableProps {
   students: Student[];
   searchTerm: string;
+  selectedDate: Date | null;
 }
 
-export function StudentsTable({ students, searchTerm }: StudentsTableProps) {
+export function StudentsTable({
+  students = [],
+  searchTerm,
+  selectedDate,
+}: StudentsTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [studentsPerPage, setStudentsPerPage] = useState(10);
   const [sortColumn, setSortColumn] = useState<keyof Student>("name");
@@ -110,7 +115,7 @@ export function StudentsTable({ students, searchTerm }: StudentsTableProps) {
             {currentStudents.map((student, index) => (
               <TableRow key={student.id}>
                 <TableCell>{indexOfFirstStudent + index + 1}</TableCell>
-                <TableCell className="flex items-start">
+                <TableCell className="flex items-center">
                   {student.name}
                   {isNewStudent(student.createdAt) && (
                     <div className="bg-green-500 ml-2 rounded-full w-2 h-2" />
@@ -127,6 +132,15 @@ export function StudentsTable({ students, searchTerm }: StudentsTableProps) {
           </TableBody>
         </Table>
       </div>
+      {currentStudents.length === 0 && (
+        <div className="py-4 text-center">
+          {selectedDate
+            ? `No students found ${
+                searchTerm ? "matching the search" : ""
+              } for the selected date.`
+            : `No students found${searchTerm ? " matching the search." : "."}`}
+        </div>
+      )}
       <div className="flex justify-between items-start md:items-center gap-4 py-4">
         <Select
           value={studentsPerPage.toString()}
