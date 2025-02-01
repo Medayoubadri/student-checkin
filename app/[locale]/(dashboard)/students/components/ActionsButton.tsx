@@ -9,7 +9,7 @@ import {
 import { ImportStudentsModal } from "@/app/[locale]/(dashboard)/students/components/ImportStudentsModal";
 import { ExportOptionsModal } from "@/app/[locale]/(dashboard)/students/components/ExportOptionsModal";
 import { useTranslations } from "next-intl";
-import { DownloadIcon, UploadIcon } from "lucide-react";
+import { ArrowUpDownIcon, DownloadIcon, UploadIcon } from "lucide-react";
 
 export function ActionsButton({
   onImportComplete,
@@ -24,7 +24,10 @@ export function ActionsButton({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline">{t("actions")}</Button>
+          <Button variant="outline">
+            <ArrowUpDownIcon className="w-4 h-4" />
+            {t("actions")}
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="bg-background p-2">
           <DropdownMenuItem

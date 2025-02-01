@@ -1,7 +1,4 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +6,9 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -18,41 +18,60 @@ import {
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
 
-interface NewStudentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (
-    name: string,
-    age: string,
-    gender: string,
-    phoneNumber: string
-  ) => void;
+interface Student {
+  id: string;
   name: string;
+  age: number;
+  gender: string;
+  phoneNumber: string;
+  createdAt: string;
 }
 
-export function NewStudentModal({
+interface EditStudentModalProps {
+  student: Student | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (updatedStudent: Student) => void;
+}
+
+export function EditStudentModal({
+  student,
   isOpen,
   onClose,
-  onSubmit,
-  name,
-}: NewStudentModalProps) {
-  const t = useTranslations("NewStudentModal");
+  onSave,
+}: EditStudentModalProps) {
+  const t = useTranslations("EditStudentModal");
+  const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
+  useEffect(() => {
+    if (student) {
+      setName(student.name);
+      setAge(student.age.toString());
+      setGender(student.gender);
+      setPhoneNumber(student.phoneNumber);
+    }
+  }, [student]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(name, age, gender, phoneNumber);
+    if (student) {
+      onSave({
+        ...student,
+        name,
+        age: Number.parseInt(age),
+        gender,
+        phoneNumber,
+      });
+    }
     onClose();
-    setAge("");
-    setGender("");
-    setPhoneNumber("");
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] md:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{t("title")}</DialogTitle>
         </DialogHeader>
@@ -62,7 +81,12 @@ export function NewStudentModal({
               <Label htmlFor="name" className="text-right">
                 {t("FullName")}
               </Label>
-              <Input id="name" value={name} className="col-span-3" disabled />
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="col-span-3"
+              />
             </div>
             <div className="items-center gap-4 grid grid-cols-4">
               <Label htmlFor="age" className="text-right">
@@ -74,16 +98,15 @@ export function NewStudentModal({
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
                 className="col-span-3"
-                required
               />
             </div>
             <div className="items-center gap-4 grid grid-cols-4">
               <Label htmlFor="gender" className="text-right">
                 {t("Gender")}
               </Label>
-              <Select value={gender} onValueChange={setGender} required>
+              <Select value={gender} onValueChange={setGender}>
                 <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select gender" />
+                  <SelectValue placeholder="Select Gender" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="male">{t("male")}</SelectItem>
@@ -93,11 +116,10 @@ export function NewStudentModal({
             </div>
             <div className="items-center gap-4 grid grid-cols-4">
               <Label htmlFor="phoneNumber" className="text-right">
-                {t("Phone")}
+                {t("phoneNumber")}
               </Label>
               <Input
                 id="phoneNumber"
-                type="tel"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className="col-span-3"
@@ -105,7 +127,7 @@ export function NewStudentModal({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">{t("addStudent")}</Button>
+            <Button type="submit">{t("save")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

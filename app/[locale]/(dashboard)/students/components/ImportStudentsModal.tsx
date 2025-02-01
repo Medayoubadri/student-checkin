@@ -6,7 +6,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
 import { FileInput } from "@/components/ui/file-input";
@@ -22,9 +21,9 @@ export function ImportStudentsModal({
   onClose,
   onImportComplete,
 }: ImportStudentsModalProps) {
-  const [file, setFile] = useState<File | null>(null);
+  const [file] = useState<File | null>(null);
   const t = useTranslations("ImportStudentsModal");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [, setSelectedFile] = useState<File | null>(null);
 
   const handleImport = async () => {
     if (!file) {
@@ -57,6 +56,7 @@ export function ImportStudentsModal({
         throw new Error("Import failed");
       }
     } catch (error) {
+      console.error("Error importing students:", error);
       toast({
         title: t("toastitle-failed"),
         description: t("toastdescription-failed"),
