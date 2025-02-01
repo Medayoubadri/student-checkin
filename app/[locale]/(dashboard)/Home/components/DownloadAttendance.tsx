@@ -112,27 +112,46 @@ export function DownloadAttendance({ selectedDate }: DownloadAttendanceProps) {
         wrapText: true,
       };
 
-      // Add date
-      worksheet.mergeCells("A4:D4");
+      // Add date label
       const dateCell = worksheet.getCell("A4");
-      dateCell.value = t("dateLabel", { date: formattedDate });
-      dateCell.font = { bold: true, size: 12, name: "Carlito" };
+      dateCell.value = t("dateLabel");
+      dateCell.font = { size: 12, name: "Carlito" };
+      dateCell.alignment = {
+        vertical: "top",
+        horizontal: "left",
+      };
+
+      // Add date value
+      worksheet.mergeCells("B4:D4");
+      const dateCellvalue = worksheet.getCell("B4");
+      dateCellvalue.value = formattedDate;
+      dateCellvalue.font = { bold: true, size: 12, name: "Carlito" };
+      dateCellvalue.alignment = {
+        vertical: "top",
+        horizontal: "left",
+      };
 
       // Add teachers label
-      worksheet.mergeCells("A5:B5");
       const teachersLabelCell = worksheet.getCell("A5");
       teachersLabelCell.value = t("teachersName");
-      teachersLabelCell.font = { bold: true, size: 12, name: "Carlito" };
+      teachersLabelCell.font = { size: 12, name: "Carlito" };
+      teachersLabelCell.alignment = {
+        vertical: "top",
+        horizontal: "left",
+      };
 
       // Add teachers list
-      worksheet.mergeCells("C5:D5");
-      const teachersListCell = worksheet.getCell("C5");
+      worksheet.mergeCells("B5:D5");
+      const teachersListCell = worksheet.getCell("B5");
       teachersListCell.value = teachers.filter((t) => t).join("\n");
+      teachersListCell.font = { bold: true, size: 12, name: "Carlito" };
       teachersListCell.alignment = {
-        vertical: "middle",
+        vertical: "top",
         horizontal: "left",
         wrapText: true,
       };
+
+      worksheet.mergeCells("A6:D6");
 
       // Create table without result details
       worksheet.addTable({
@@ -159,33 +178,24 @@ export function DownloadAttendance({ selectedDate }: DownloadAttendanceProps) {
           showRowStripes: true,
         },
       });
-
-      // Style the header row
-      // const headerRow = worksheet.getCell("A7:D7");
-      // headerRow.font = { bold: true, name: "Carlito" };
-      // headerRow.fill = {
-      //   type: "pattern",
-      //   pattern: "solid",
-      //   fgColor: { argb: "a6e2a6" },
-      // };
+      worksheet.getRow(7).font = { bold: true, size: 12, name: "Carlito" };
 
       // Set column widths
       worksheet.columns = [
         { width: 25 },
-        { width: 5 },
-        { width: 5 },
+        { width: 7 },
+        { width: 7 },
         { width: 15 },
       ];
 
       // Set row heights
       worksheet.getRow(1).height = 60; // Title row
-      worksheet.getRow(5).height = 30; // Teachers label row
-      teachers
-        .filter((t) => t)
-        .forEach((_, index) => {
-          worksheet.getRow(6 + index).height = 35; // Teacher rows
-        });
-      worksheet.getRow(7).height = 15; // Header row
+      worksheet.getRow(4).height = 25; // Date row
+      // Set teachers row height based on number of teachers
+      worksheet.getRow(5).height =
+        35 + (teachers.filter((t) => t).length - 1) * 5;
+      // Set header row height
+      worksheet.getRow(7).height = 25; // Header row
 
       // Generate the file
       const buffer = await workbook.xlsx.writeBuffer();
