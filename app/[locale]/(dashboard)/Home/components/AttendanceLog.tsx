@@ -42,7 +42,9 @@ export default function AttendanceLog({
   const f = useFormatter();
 
   useEffect(() => {
-    fetchAttendanceData(currentDate);
+    fetchAttendanceData(
+      currentDate.getHours() === 0 ? currentDate : new Date(currentDate)
+    );
     console.log("Fetching current date:", currentDate);
   }, [currentDate, refreshTrigger]);
 
@@ -132,7 +134,7 @@ export default function AttendanceLog({
             <Popover>
               <PopoverTrigger asChild>
                 <CardTitle className="text-sm sm:text-base capitalize cursor-pointer">
-                  {f.dateTime(currentDate.setHours(0, 0, 0, 0), {
+                  {f.dateTime(currentDate, {
                     weekday: "long",
                     day: "numeric",
                     month: "long",
