@@ -15,7 +15,7 @@ export async function GET() {
 
   try {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // today.setHours(0, 0, 0, 0);
 
     const recentActivity = await prisma.attendance.findMany({
       where: {

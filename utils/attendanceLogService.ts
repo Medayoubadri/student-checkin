@@ -10,12 +10,15 @@ interface AttendanceEntry {
 
 const DAILY_CACHE_KEY = "attendance-daily";
 const TOTAL_CACHE_KEY = "attendance-total";
-const CACHE_TTL = 60 * 120 * 1000; // 2 hours
+const CACHE_TTL = 1 * 1 * 1000; // 2 hours
 const formatDateKey = (date: Date) => {
   // Create date at midnight in local timezone
   const localDate = new Date(date);
+  // localDate.setHours(0, 0, 0, 0);
   // Get YYYY-MM-DD in local timezone
-  return localDate;
+  return `${localDate.getFullYear()}-${String(
+    localDate.getMonth() + 1
+  ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
 };
 
 export const attendanceLogService = {
