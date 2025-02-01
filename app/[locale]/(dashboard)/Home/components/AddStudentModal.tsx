@@ -78,11 +78,6 @@ export function NewStudentModal({
                 required
                 min="1"
                 max="80"
-                onInput={(e) => {
-                  const input = e.currentTarget;
-                  if (input.value < "1") input.value = "1";
-                  if (input.value > "80") input.value = "80";
-                }}
               />
             </div>
             <div className="items-center gap-4 grid grid-cols-4">
