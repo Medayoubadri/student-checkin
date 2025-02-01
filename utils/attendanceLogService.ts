@@ -97,7 +97,6 @@ export const attendanceLogService = {
           })
         );
       });
-
       return { ...cachedResults, ...freshData };
     } catch (error) {
       console.error("Failed to fetch total attendances:", error);
@@ -158,7 +157,13 @@ export const attendanceLogService = {
   },
 
   invalidateTotalCache() {
-    localStorage.removeItem(`${TOTAL_CACHE_KEY}-batch`);
+    // Get all localStorage keys
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(TOTAL_CACHE_KEY)) {
+        localStorage.removeItem(key);
+      }
+    }
   },
 
   invalidateCache(studentId?: string, date?: Date) {

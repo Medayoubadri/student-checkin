@@ -32,7 +32,13 @@ export const attendanceHistoryService = {
     return data;
   },
 
-  invalidateCache() {
-    localStorage.removeItem(HISTORY_CACHE_KEY);
+  invalidateCache(): boolean {
+    try {
+      localStorage.removeItem(HISTORY_CACHE_KEY);
+      return true;
+    } catch (error) {
+      console.error("Failed to invalidate attendance cache:", error);
+      return false;
+    }
   },
 };

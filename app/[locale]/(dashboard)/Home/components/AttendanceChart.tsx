@@ -18,6 +18,7 @@ interface AttendanceData {
 
 interface AttendanceChartProps {
   data: AttendanceData[];
+  onDataUpdate: () => void;
 }
 
 export function AttendanceChart({ data }: AttendanceChartProps) {
