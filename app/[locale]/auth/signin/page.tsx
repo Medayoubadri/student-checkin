@@ -22,7 +22,9 @@ export default function SignIn() {
   const locale = params.locale as string;
 
   const handleSignIn = (provider: string) => {
-    signIn(provider, { callbackUrl: `/${locale}/Home` });
+    signIn(provider, {
+      callbackUrl: `${window.location.origin}/${locale}/Home`,
+    });
   };
 
   return (

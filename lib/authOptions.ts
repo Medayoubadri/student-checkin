@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
+import { locales } from "@/config";
 
 const prisma = new PrismaClient();
 
@@ -29,14 +30,26 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     redirect: async ({ url, baseUrl }) => {
-      // Check if the URL is relative (starts with a slash)
+      // Ensure baseUrl doesn't have a trailing slash
+      baseUrl = baseUrl.replace(/\/$/, "");
+
+      // If the URL is relative (starts with a slash)
       if (url.startsWith("/")) {
-        // Extract locale from the URL or default to 'en'
-        const locale = url.split("/")[1] || "fr";
-        // Ensure the URL starts with the locale and redirects to the Home page
+        // Extract locale from the URL or default to 'fr'
+        const urlParts = url.split("/").filter(Boolean);
+        const locale = urlParts[0] in locales ? urlParts[0] : "fr";
+
+        // Construct the redirect URL
         return `${baseUrl}/${locale}/Home`;
       }
-      // If it's an absolute URL, return it as is
+
+      // If it's an absolute URL within the same site, add locale
+      if (url.startsWith(baseUrl)) {
+        const locale = url.split("/")[3] in locales ? url.split("/")[3] : "fr";
+        return `${baseUrl}/${locale}/Home`;
+      }
+
+      // For external URLs, return as is
       return url;
     },
   },
