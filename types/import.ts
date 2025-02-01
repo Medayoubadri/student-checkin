@@ -12,8 +12,12 @@ export interface ImportResult {
   error?: string;
 }
 
-export interface ColumnMapping {
-  [key: string]: string;
+export interface Student {
+  id: string;
+  name: string;
+  age: number;
+  gender: string;
+  phoneNumber: string;
 }
 
 export interface ImportProgress {

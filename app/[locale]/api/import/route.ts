@@ -47,7 +47,7 @@ function validateAge(age: string): number | null {
 
 function validateGender(gender: string): string {
   const normalizedGender = gender.toLowerCase().trim();
-  return ["male", "female"].includes(normalizedGender) ? normalizedGender : "";
+  return ["Male", "Female"].includes(normalizedGender) ? normalizedGender : "";
 }
 
 export async function POST(req: Request) {

@@ -14,26 +14,38 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const studentId = searchParams.get("studentId");
+  const studentIds = searchParams.get("studentIds")?.split(",") || [];
 
-  if (!studentId) {
+  if (studentIds.length === 0) {
     return NextResponse.json(
-      { error: "Student ID parameter is required" },
+      { error: "Student IDs parameter is required" },
       { status: 400 }
     );
   }
 
   try {
-    const totalAttendance = await prisma.attendance.count({
+    const attendanceCounts = await prisma.attendance.groupBy({
+      by: ["studentId"],
+      _count: {
+        studentId: true,
+      },
       where: {
-        studentId: studentId,
+        studentId: { in: studentIds },
         student: {
           userId: session.user.id,
         },
       },
     });
 
-    return NextResponse.json({ total: totalAttendance });
+    const result = attendanceCounts.reduce(
+      (acc: { [key: string]: number }, curr) => {
+        acc[curr.studentId] = curr._count.studentId;
+        return acc;
+      },
+      {}
+    );
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Error fetching total attendance:", error);
     return NextResponse.json(
