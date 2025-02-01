@@ -12,11 +12,11 @@ const DAILY_CACHE_KEY = "attendance-daily";
 const TOTAL_CACHE_KEY = "attendance-total";
 const CACHE_TTL = 60 * 120 * 1000; // 2 hours
 const formatDateKey = (date: Date) => {
-  // Create date at midnight in local timezone
-  const localDate = new Date(date);
-  localDate.setHours(0, 0, 0, 0);
-  // Get YYYY-MM-DD in local timezone
-  return localDate;
+  // Convert to UTC date at midnight
+  const utcDate = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
+  return utcDate.toISOString().split("T")[0]; // Returns YYYY-MM-DD
 };
 
 export const attendanceLogService = {
