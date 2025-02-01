@@ -42,9 +42,7 @@ export default function AttendanceLog({
   const f = useFormatter();
 
   useEffect(() => {
-    fetchAttendanceData(
-      currentDate.getHours() === 0 ? currentDate : new Date(currentDate)
-    );
+    fetchAttendanceData(currentDate);
     console.log("Fetching current date:", currentDate);
   }, [currentDate, refreshTrigger]);
 
@@ -147,10 +145,10 @@ export default function AttendanceLog({
                   selected={currentDate}
                   onSelect={(date) => {
                     if (date) {
-                      // const normalized = new Date(date);
-                      // normalized.setHours(0, 0, 0, 0); // Ensure midnight
-                      setCurrentDate(date);
-                      console.log("Setting date from calendar:", date);
+                      const normalized = new Date(date);
+                      normalized.setHours(0, 0, 0, 0); // Ensure midnight
+                      setCurrentDate(normalized);
+                      console.log("Setting date from calendar:", normalized);
                       const trigger = document.querySelector(
                         '[data-state="open"]'
                       );
