@@ -1,12 +1,16 @@
-import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import SignIn from "@/app/auth/signin/page";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession();
+
+  if (session) {
+    redirect("/Home");
+  }
   return (
-    <main className="flex flex-col justify-center items-center p-24 min-h-screen">
-      <h1 className="mb-8 font-bold text-4xl">Student Attendance System</h1>
-      <Link href="/auth/signin" className="text-blue-500 hover:underline">
-        Sign In
-      </Link>
-    </main>
+    <>
+      <SignIn />
+    </>
   );
 }
