@@ -26,6 +26,7 @@
     "selectGender": "Select gender",
     "male": "Male",
     "female": "Female",
+    "startTypingStudentName": "Start typing student name...",
     "checkInSuccess-Title": "Check-in Successful",
     "checkInSuccess-Description": "Student has been checked in successfully.",
     "checkInError-Title": "Check-in Error",
@@ -135,10 +136,12 @@
     "reason": "Reason"
   },
   "ProcessingScreen": {
-    "processingStep1": "Importing data...",
-    "processingStep2": "Cleaning data...",
-    "processingStep3": "Processing data...",
-    "processingStep4": "Saving data to database..."
+    "processedBatches": "Processed batch {current} of {total}",
+    "cleaningData": "Cleaning spaces, special characters...",
+    "deduplicatingRecords": "Cleaning deduplicated records...",
+    "importingRecords": "Saving records to database...",
+    "preparing": "Preparing...",
+    "pleaseWait": "Please wait..."
   },
   "ImportModal": {
     "chooseFile": "Choose File",

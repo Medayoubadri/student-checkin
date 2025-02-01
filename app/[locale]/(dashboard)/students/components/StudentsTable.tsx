@@ -167,7 +167,7 @@ export function StudentsTable({
               <TableHead className="w-[100px]">{t("Edit")}</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="bg-background">
             {currentStudents.map((student, index) => (
               <TableRow key={student.id}>
                 <TableCell>
@@ -248,7 +248,7 @@ export function StudentsTable({
           value={studentsPerPage.toString()}
           onValueChange={(value) => setStudentsPerPage(Number(value))}
         >
-          <SelectTrigger className="w-full md:w-[200px]">
+          <SelectTrigger className="bg-background w-full md:w-[200px]">
             <SelectValue
               placeholder="Students per page"
               className="flex gap-2"

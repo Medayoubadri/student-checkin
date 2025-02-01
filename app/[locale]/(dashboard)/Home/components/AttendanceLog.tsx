@@ -44,8 +44,6 @@ export default function AttendanceLog({
   const fetchAttendanceData = async (date: Date) => {
     setIsLoading(true);
     try {
-      // const studentsRes = await fetch("/api/students");
-      // const students = await studentsRes.json();
       const dailyResponse = await fetch(`/api/attendance/daily?date=${date}`);
       if (!dailyResponse.ok) {
         throw new Error("Failed to fetch daily attendance data");
@@ -228,7 +226,7 @@ export default function AttendanceLog({
                 <Button
                   variant="default"
                   onClick={() => handleRemoveAttendance(entry.id)}
-                  className="bg-transparent hover:bg-transparent w-4 h-6 text-destructive hover:text-destructive/90 hover:text-red-500"
+                  className="bg-transparent hover:bg-transparent shadow-none w-4 h-6 text-destructive hover:text-destructive/90 hover:text-red-500"
                 >
                   <X className="!w-5 !h-5" />
                   <span className="sr-only">{t("removeAttendance")}</span>

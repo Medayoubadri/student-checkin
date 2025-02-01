@@ -15,3 +15,9 @@ export interface ImportResult {
 export interface ColumnMapping {
   [key: string]: string;
 }
+
+export interface ImportProgress {
+  currentStep: "cleaning" | "deduplicating" | "importing";
+  processedRecords: number;
+  totalRecords: number;
+}
