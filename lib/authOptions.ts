@@ -29,13 +29,27 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     redirect: async ({ url, baseUrl }) => {
-      // Check if the URL is relative (starts with a slash)
-      const locale = url.split("/")[1];
+      // Preserve the locale in redirects
+      if (url.startsWith(baseUrl)) return url;
+
+      // Handle relative URLs
       if (url.startsWith("/")) {
-        // Ensure the URL starts with the locale and redirects to the Home page
-        return `${baseUrl}/${locale}/Home`;
+        // Extract locale from the URL if present
+        const urlParts = url.split("/");
+        const locale = urlParts[1];
+        const isLocale = ["fr", "en"].includes(locale);
+
+        // If URL already has locale, use it as is
+        if (isLocale) {
+          return `${baseUrl}${url}`;
+        }
+
+        // Default to 'fr' locale if none present
+        return `${baseUrl}/fr${url}`;
       }
-      return `${baseUrl}/${locale}/Home`;
+
+      // Default redirect
+      return `${baseUrl}/fr/Home`;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
