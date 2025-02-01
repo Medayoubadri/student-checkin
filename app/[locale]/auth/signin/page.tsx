@@ -18,14 +18,14 @@ import { useParams, useSearchParams } from "next/navigation";
 
 export default function SignIn() {
   const t = useTranslations("Auth");
-  const params = useParams();
   const searchParams = useSearchParams();
+  const params = useParams();
   const locale = params.locale as string;
   const error = searchParams.get("error");
 
   const handleSignIn = async (provider: string) => {
     await signIn(provider, {
-      callbackUrl: `/${locale}/Home`,
+      callbackUrl: `${locale}/Home`,
     });
   };
 
