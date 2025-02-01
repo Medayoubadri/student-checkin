@@ -36,7 +36,7 @@ function StatCard({
 }) {
   return (
     <div
-      className={`bg-background rounded-lg shadow p-4 flex items-center space-x-4 border-l-4 ${color}`}
+      className={`dark:bg-zinc-950 bg-slate-200 rounded-lg shadow p-4 flex items-center space-x-4 border-l-4 ${color}`}
     >
       <Icon className="w-8 h-8 text-gray-500" />
       <div>
@@ -127,7 +127,7 @@ export function ImportLogModal({
                         (record, index) => (
                           <li
                             key={index}
-                            className="flex flex-col gap-2 bg-background shadow-md p-5 border-red-500 border-l-4 rounded-lg"
+                            className="flex flex-col gap-2 bg-red-800/10 shadow-md p-5 border-red-500 border-l-4 rounded-lg"
                           >
                             <span className="font-medium">
                               {t("record")}:{" "}

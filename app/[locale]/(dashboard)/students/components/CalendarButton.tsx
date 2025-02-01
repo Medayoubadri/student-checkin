@@ -38,12 +38,16 @@ export function CalendarButton({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-auto" align="start">
+      <PopoverContent
+        className="p-0 rounded-xl w-auto overflow-hidden"
+        align="end"
+      >
         <Calendar
           mode="single"
           selected={selectedDate || undefined}
           onSelect={handleSelect}
           initialFocus
+          className="bg-background"
         />
       </PopoverContent>
     </Popover>

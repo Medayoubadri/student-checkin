@@ -250,6 +250,15 @@ export function StudentsTable({
                   ))}
             </TableBody>
           </Table>
+          {!isLoading && currentStudents.length === 0 && (
+            <div className="flex justify-center items-end py-4 w-full h-1/2 text-muted-foreground text-center">
+              {selectedDate
+                ? `${t("noStudentsFound")} ${
+                    searchTerm ? t("forSearch") : ""
+                  } for the selected date.`
+                : `${t("noStudentsFound")}${searchTerm ? t("forSearch") : "."}`}
+            </div>
+          )}
         </div>
       </div>
       <AnimatePresence>
@@ -271,15 +280,6 @@ export function StudentsTable({
           </motion.div>
         )}
       </AnimatePresence>
-      {!isLoading && currentStudents.length === 0 && (
-        <div className="py-4 text-center">
-          {selectedDate
-            ? `${t("noStudentsFound")} ${
-                searchTerm ? t("forSearch") : ""
-              } for the selected date.`
-            : `${t("noStudentsFound")}${searchTerm ? t("forSearch") : "."}`}
-        </div>
-      )}
       {!isLoading && (
         <div className="flex justify-between items-center md:items-center gap-4 w-full">
           <Select
@@ -292,7 +292,7 @@ export function StudentsTable({
                 className="flex gap-2"
               />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-background">
               {[5, 10, 30, 60, 100].map((value) => (
                 <SelectItem key={value} value={value.toString()}>
                   {value}
