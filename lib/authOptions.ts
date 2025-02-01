@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -27,6 +27,17 @@ export const authOptions: NextAuthOptions = {
         session.user.id = user.id;
       }
       return session;
+    },
+    redirect: async ({ url, baseUrl }) => {
+      // Check if the URL is relative (starts with a slash)
+      if (url.startsWith("/")) {
+        // Extract locale from the URL or default to 'en'
+        const locale = url.split("/")[1] || "en";
+        // Ensure the URL starts with the locale and redirects to the Home page
+        return `${baseUrl}/${locale}/Home`;
+      }
+      // If it's an absolute URL, return it as is
+      return url;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
