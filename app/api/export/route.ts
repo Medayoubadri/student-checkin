@@ -1,65 +1,75 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { stringify } from "csv-stringify/sync";
 import * as XLSX from "xlsx";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET() {
-  try {
-    // Get today's date
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const format = searchParams.get("format") || "csv";
 
-    // Fetch today's attendance records with student details
-    const attendanceRecords = await prisma.attendance.findMany({
-      where: {
-        date: {
-          gte: today,
-          lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
-        },
-      },
-      include: {
-        student: true,
-      },
+  try {
+    const students = await prisma.student.findMany({
+      orderBy: { name: "asc" },
     });
 
-    // Prepare data for XLSX
-    const data = attendanceRecords.map((record) => ({
-      "Student Name": record.student.name,
-      Age: record.student.age,
-      Gender: record.student.gender,
-      "Check-in Time": record.createdAt.toLocaleTimeString(),
+    // Transform the data
+    const transformedStudents = students.map((student, index) => ({
+      number: index + 1,
+      fullName: student.name,
+      age: student.age,
+      gender: student.gender,
     }));
 
-    // Create workbook and worksheet
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(data);
+    if (format === "csv") {
+      const csvData = stringify(transformedStudents, {
+        header: true,
+        columns: ["number", "fullName", "age", "gender"],
+      });
 
-    // Add worksheet to workbook
-    XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+      return new NextResponse(csvData, {
+        headers: {
+          "Content-Type": "text/csv",
+          "Content-Disposition":
+            "attachment; filename=Check-in_Mate_students-list.csv",
+        },
+      });
+    } else if (format === "xlsx") {
+      const worksheet = XLSX.utils.json_to_sheet(transformedStudents);
 
-    // Generate XLSX file
-    const xlsxBuffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+      // Rename the headers
+      XLSX.utils.sheet_add_aoa(
+        worksheet,
+        [["Number", "Full Name", "Age", "Gender"]],
+        { origin: "A1" }
+      );
 
-    // Set headers for file download
-    const headers = new Headers();
-    headers.append(
-      "Content-Disposition",
-      `attachment; filename="attendance_${
-        today.toISOString().split("T")[0]
-      }.xlsx"`
-    );
-    headers.append(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    );
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
 
-    // Return the XLSX file
-    return new NextResponse(xlsxBuffer, { status: 200, headers });
+      return new NextResponse(excelBuffer, {
+        headers: {
+          "Content-Type":
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "Content-Disposition":
+            "attachment; filename=Check-in_Mate_students-list.xlsx",
+        },
+      });
+    } else {
+      return NextResponse.json(
+        { error: "Invalid format specified" },
+        { status: 400 }
+      );
+    }
   } catch (error) {
-    console.error("Error exporting attendance:", error);
+    console.error("Error exporting students:", error);
     return NextResponse.json(
-      { error: "Failed to export attendance" },
+      { error: "Failed to export students" },
       { status: 500 }
     );
   }
