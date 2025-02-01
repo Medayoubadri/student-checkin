@@ -163,6 +163,7 @@
     "female": "Female",
     "male": "Male",
     "Edit": "Edit",
+    "Delete": "Delete",
     "deleteBulk": "Delete selected students",
     "itemPerPage": " per page",
     "student": "student",

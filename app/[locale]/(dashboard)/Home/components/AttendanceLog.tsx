@@ -36,7 +36,7 @@ export default function AttendanceLog({
 }: AttendanceLogProps) {
   // Initialize currentDate with time set to midnight
   const [currentDate, setCurrentDate] = useState(new Date());
-  console.log("Current date:", currentDate);
+
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations("AttendanceLog");
@@ -161,7 +161,6 @@ export default function AttendanceLog({
                         normalized.getTime() -
                           normalized.getTimezoneOffset() * 60000
                       );
-                      console.log("Selected date:", utcDate);
                       setCurrentDate(utcDate);
                       // Close the popover
                       const trigger = document.querySelector(
