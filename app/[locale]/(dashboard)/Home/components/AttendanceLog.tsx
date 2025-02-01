@@ -80,6 +80,7 @@ export default function AttendanceLog({
     setCurrentDate((prev) => {
       const newDate = new Date(prev);
       newDate.setDate(prev.getDate() + (direction === "next" ? 1 : -1));
+      // newDate.setHours(0, 0, 0, 0); // Ensure midnight
       return newDate;
     });
   };
@@ -142,7 +143,9 @@ export default function AttendanceLog({
                   selected={currentDate}
                   onSelect={(date) => {
                     if (date) {
-                      setCurrentDate(date);
+                      const normalized = new Date(date);
+                      normalized.setHours(0, 0, 0, 0); // Ensure midnight
+                      setCurrentDate(normalized);
                       const trigger = document.querySelector(
                         '[data-state="open"]'
                       );
