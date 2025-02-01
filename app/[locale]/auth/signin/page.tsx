@@ -26,7 +26,6 @@ export default function SignIn() {
   const handleSignIn = async (provider: string) => {
     await signIn(provider, {
       callbackUrl: `/${locale}/Home`,
-      redirect: true,
     });
   };
 
