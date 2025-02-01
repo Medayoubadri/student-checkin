@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { NewStudentModal } from "@/app/[locale]/(dashboard)/Home/components/AddStudentModal";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useTranslations } from "next-intl";
@@ -45,15 +45,16 @@ export function StudentCheckIn({
         `/api/students/check?name=${encodeURIComponent(normalizedName)}`
       );
 
-      if (checkResponse.status === 404) {
+      const existingStudent = await checkResponse.json();
+
+      if (existingStudent) {
+        await markAttendance(existingStudent.id);
+      } else {
         if (isDesktop) {
           setIsModalOpen(true);
         } else {
           setShowAdditionalFields(true);
         }
-      } else if (checkResponse.ok) {
-        const existingStudent = await checkResponse.json();
-        await markAttendance(existingStudent.id);
       }
     } catch (error) {
       console.error("Error checking student:", error);
@@ -135,10 +136,6 @@ export function StudentCheckIn({
     }
   };
 
-  const handleClearName = () => {
-    setName("");
-  };
-
   return (
     <Card className="bg-background w-full">
       <CardHeader>
@@ -158,16 +155,6 @@ export function StudentCheckIn({
                   await markAttendance(student.id);
                 }}
               />
-              {name && (
-                <Button
-                  variant="default"
-                  size="icon"
-                  className="top-0 right-0 absolute bg-transparent hover:bg-transparent shadow-none h-full text-destructive hover:text-red-500"
-                  onClick={handleClearName}
-                >
-                  <X className="mr-4 p-0 !w-5 !h-5" />
-                </Button>
-              )}
             </div>
           </div>
           {!showAdditionalFields && (
@@ -205,7 +192,7 @@ export function StudentCheckIn({
                     >
                       <span className="flex items-center w-full text-left text-muted-foreground">
                         {gender
-                          ? t(gender as "M" | "female")
+                          ? t(gender as "male" | "female")
                           : t("selectGender")}
                         <ChevronDown className="ml-auto w-4 h-4" />
                       </span>

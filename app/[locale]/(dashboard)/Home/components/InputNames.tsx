@@ -4,6 +4,8 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 interface Student {
   id: string;
@@ -55,6 +57,11 @@ export function NameInputs({
     }
   };
 
+  const handleClearName = () => {
+    onChange("");
+    setSuggestions([]);
+  };
+
   const handleSelect = (student: Student) => {
     onChange(student.name);
     setSuggestions([]);
@@ -72,11 +79,11 @@ export function NameInputs({
       {suggestions.length > 0 && (
         <Card className="z-10 absolute mt-1 w-full">
           <CardContent className="p-0">
-            <ul className="py-2 max-h-60 overflow-auto">
+            <ul className="px-2 py-2 max-h-60 overflow-auto">
               {suggestions.map((student) => (
                 <li
                   key={student.id}
-                  className="hover:bg-gray-100 px-4 py-2 cursor-pointer"
+                  className="hover:bg-gray-100/10 px-4 py-2 rounded-md cursor-pointer"
                   onClick={() => handleSelect(student)}
                 >
                   {student.name}
@@ -90,6 +97,16 @@ export function NameInputs({
             </ul>
           </CardContent>
         </Card>
+      )}
+      {value && (
+        <Button
+          variant="default"
+          size="icon"
+          className="top-0 right-0 absolute bg-transparent hover:bg-transparent shadow-none h-full text-destructive hover:text-red-500"
+          onClick={handleClearName}
+        >
+          <X className="mr-4 p-0 !w-5 !h-5" />
+        </Button>
       )}
     </div>
   );
