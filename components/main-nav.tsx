@@ -3,7 +3,7 @@
 import { LogOut, LayoutDashboard, Users } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-
+import Image from "next/image";
 import {
   Sidebar,
   SidebarContent,
@@ -38,7 +38,15 @@ export function MainNav() {
       collapsible="offcanvas"
     >
       <SidebarHeader className="items-center px-4 py-4">
-        <h2 className="font-semibold text-2xl">{t("title")}</h2>
+        <Link
+          href={`/${locale}/Home`}
+          className="flex flex-col items-center gap-2"
+        >
+          <Image src="/chess-logo.svg" alt="Logo" width={60} height={60} />
+          <h2 className="font-semibold text-2xl whitespace-nowrap">
+            {t("title")}
+          </h2>
+        </Link>
       </SidebarHeader>
       <SidebarContent className="p-4">
         <SidebarMenu>
@@ -57,7 +65,7 @@ export function MainNav() {
                   href={item.href}
                   className="flex items-center hover:dark:bg-emerald-900/15 hover:bg-slate-200/35 mb-2 px-4 py-6 rounded-md"
                 >
-                  <item.icon className="mr-2 w-8 h-8" />
+                  <item.icon className="mr-2 !w-6 !h-6" />
                   {item.label}
                 </Link>
               </SidebarMenuButton>
@@ -68,7 +76,7 @@ export function MainNav() {
       <SidebarFooter className="p-4">
         <Button
           variant="outline"
-          className="justify-start hover:border-destructive hover:bg-destructive p-6 w-full"
+          className="justify-start hover:border-destructive hover:bg-destructive p-6 w-full hover:text-white"
           onClick={handleSignOut}
         >
           <LogOut className="mr-2 w-4 h-4" />

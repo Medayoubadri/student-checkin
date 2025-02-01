@@ -7,7 +7,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 
 export default function Header() {
   return (
-    <header className="flex justify-between items-center shadow-md md:shadow-none px-4 w-full h-14">
+    <header className="flex justify-between items-center bg-transparent px-6 w-full h-14">
       <SidebarTrigger className="md:hidden" />
       <div className="flex-1 md:flex-none" />{" "}
       <div className="flex items-center space-x-4">

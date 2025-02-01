@@ -11,9 +11,7 @@ import { SelectedDateDisplay } from "./components/SelectedDateDisplay";
 import { EditStudentModal } from "./components/EditStudentModal";
 import { Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-
 import { DeleteConfirmationDialog } from "./components/DeleteConfirmationDialog";
-import type React from "react"; // Added import for React
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 
@@ -43,7 +41,7 @@ export default function StudentsPage() {
     try {
       let url = "/api/students";
       if (selectedDate) {
-        url += `?date=${selectedDate.toISOString().split("T")[0]}`;
+        url += `?date=${selectedDate}`;
       }
       const response = await fetch(url);
       const data = await response.json();
@@ -179,67 +177,71 @@ export default function StudentsPage() {
   };
 
   return (
-    <div className="flex flex-col md:mt-0 p-4 md:p-6 w-full !h-full overflow-y-auto">
-      <div className="flex justify-between items-center mb-4 md:mb-6">
-        <h1 className="w-full lg:max-w-7xl font-bold text-2xl md:text-4xl">
-          {t("title")}
-        </h1>
-      </div>
+    <div className="flex flex-col items-center gap-4 md:mt-0 p-4 md:p-6 w-full h-full overflow-y-auto">
       <div className="flex flex-col items-center gap-4 w-full lg:max-w-7xl">
-        <div className="flex md:flex-row flex-col md:justify-between gap-4 md:space-x-4 mb-4 w-full">
-          <div className="flex md:flex-row flex-col md:items-center gap-4 w-full md:w-auto">
-            <div className="relative w-full md:w-72">
-              <Search className="top-1/2 left-2 absolute w-4 h-4 text-muted-foreground transform -translate-y-1/2" />
-              <Input
-                placeholder={t("SearchPlaceholder")}
-                value={searchTerm}
-                onChange={handleSearch}
-                className="pr-10 pl-8 w-full"
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h1 className="w-full lg:max-w-7xl font-bold text-2xl md:text-4xl">
+            {t("title")}
+          </h1>
+        </div>
+        <div className="flex flex-col items-center gap-4 w-full lg:max-w-7xl">
+          <div className="flex md:flex-row flex-col md:justify-between gap-4 md:space-x-4 mb-4 w-full">
+            <div className="flex md:flex-row flex-col md:items-center gap-4 w-full md:w-auto">
+              <div className="relative w-full md:w-72">
+                <Search className="top-1/2 left-2 absolute w-4 h-4 text-muted-foreground transform -translate-y-1/2" />
+                <Input
+                  placeholder={t("SearchPlaceholder")}
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  className="pr-10 pl-8 w-full"
+                />
+                {searchTerm && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="top-0 right-0 absolute h-full"
+                    onClick={handleClearSearch}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+            <SelectedDateDisplay
+              selectedDate={selectedDate}
+              onClear={clearSelectedDate}
+            />
+            <div className="flex gap-2 md:gap-4">
+              <CalendarButton
+                onDateSelect={handleDateSelect}
+                selectedDate={selectedDate}
               />
-              {searchTerm && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="top-0 right-0 absolute h-full"
-                  onClick={handleClearSearch}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              )}
+              <ActionsButton onImportComplete={fetchStudents} />
             </div>
           </div>
-          <SelectedDateDisplay
+          <StudentsTable
+            students={students}
+            searchTerm={searchTerm}
             selectedDate={selectedDate}
-            onClear={clearSelectedDate}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onBulkDelete={handleBulkDelete}
           />
-          <div className="flex gap-2 md:gap-4">
-            <CalendarButton
-              onDateSelect={handleDateSelect}
-              selectedDate={selectedDate}
-            />
-            <ActionsButton onImportComplete={fetchStudents} />
-          </div>
+          <EditStudentModal
+            student={editingStudent}
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            onSave={handleSaveEdit}
+          />
+          <DeleteConfirmationDialog
+            isOpen={isDeleteDialogOpen}
+            onClose={() => setIsDeleteDialogOpen(false)}
+            onConfirm={handleConfirmDelete}
+            itemName={
+              studentsToDelete.length > 1 ? t("students") : t("student")
+            }
+          />
         </div>
-        <StudentsTable
-          students={students}
-          searchTerm={searchTerm}
-          selectedDate={selectedDate}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onBulkDelete={handleBulkDelete}
-        />
-        <EditStudentModal
-          student={editingStudent}
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onSave={handleSaveEdit}
-        />
-        <DeleteConfirmationDialog
-          isOpen={isDeleteDialogOpen}
-          onClose={() => setIsDeleteDialogOpen(false)}
-          onConfirm={handleConfirmDelete}
-          itemName={studentsToDelete.length > 1 ? t("students") : t("student")}
-        />
       </div>
     </div>
   );

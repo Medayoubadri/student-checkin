@@ -15,7 +15,13 @@ export function SelectedDateDisplay({
   const t = useTranslations("SelectedDateDisplay");
 
   if (!selectedDate) return null;
-  const formattedDate = selectedDate.toISOString().split("T")[0];
+  const formattedDate = t("dateFormat", {
+    date: selectedDate,
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <div className="flex items-center gap-2">

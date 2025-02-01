@@ -21,14 +21,25 @@
     "age": "Age",
     "gender": "Gender",
     "check": "Check",
+    "phoneNumber": "Phone",
     "submit": "Submit",
     "selectGender": "Select gender",
     "male": "Male",
-    "female": "Female"
+    "female": "Female",
+    "checkInSuccess-Title": "Check-in Successful",
+    "checkInSuccess-Description": "Student has been checked in successfully.",
+    "checkInError-Title": "Check-in Error",
+    "checkInError-Description": "An error occurred while checking in.",
+    "checkInMarked-Title": "Already Checked In",
+    "checkInMarked-Description": "Student record already marked as present."
   },
-  "RecentActivityLog": {
-    "checkIns": "{day}'s Check-ins",
-    "downloadTooltip": "Download today's attendance"
+  "AttendanceLog": {
+    "attendance": "Attendance",
+    "loading": "Loading...",
+    "noAttendanceRecords": "No attendance records for today",
+    "noRecentActivity": "No recent activity for today",
+    "dateFormat": "{date, date, full}",
+    "totalAttendance": "{count, plural, =1 {# total attendance} other {# total attendances}}"
   },
   "MetricsCards": {
     "totalStudents": "Total Students",
@@ -98,7 +109,8 @@
     "noFileChosen": "No file chosen"
   },
   "SelectedDateDisplay": {
-    "studentsPresentOn": "Students present on"
+    "studentsPresentOn": "Students present on",
+    "dateFormat": "{date, date, full}"
   },
   "StudentsTable": {
     "No": "No.",
@@ -113,7 +125,8 @@
     "student": "student",
     "students": "students",
     "noStudentsFound": "No students found",
-    "forSearch": " matching the search"
+    "forSearch": " matching the search",
+    "studentsTotal": "Total Students"
   },
   "NewStudentModal": {
     "title": "Add Student",
@@ -140,5 +153,23 @@
     "deleteConfirmationDescription": "Are you sure you want to delete {itemName}?",
     "cancel": "Cancel",
     "delete": "Delete"
+  },
+  "DownloadAttendance": {
+    "reportTitle": "Chess Club Attendance Report",
+    "dateLabel": "Date: {date}",
+    "fullName": "Full Name",
+    "age": "Age",
+    "gender": "Gender",
+    "phone": "Phone",
+    "download": "Download",
+    "dateFormat": "{date, date, full}",
+    "attendanceFileName": "attendance",
+    "downloadSelected": "Download Selected",
+    "downloadSuccess": "Download Successful",
+    "downloadSuccessDescription": "The attendance report has been downloaded successfully.",
+    "noDataTitle": "No Data Available",
+    "noDataDescription": "No attendance data available for the selected date.",
+    "downloadError": "Download Error",
+    "downloadErrorDescription": "An error occurred while downloading the attendance report. Please try again."
   }
 }
