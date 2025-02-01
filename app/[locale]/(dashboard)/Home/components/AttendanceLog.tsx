@@ -34,8 +34,12 @@ export default function AttendanceLog({
   onAttendanceRemoved,
 }: AttendanceLogProps) {
   // Initialize currentDate with time set to midnight
-  const [currentDate, setCurrentDate] = useState(new Date());
-  console.log("Current Date:", currentDate);
+  const [currentDate, setCurrentDate] = useState(() => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return now;
+  });
+
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
   const [isLoading] = useState(false);
   const t = useTranslations("AttendanceLog");
@@ -43,7 +47,6 @@ export default function AttendanceLog({
 
   useEffect(() => {
     fetchAttendanceData(currentDate);
-    console.log("Fetching current date:", currentDate);
   }, [currentDate, refreshTrigger]);
 
   const fetchAttendanceData = async (date: Date) => {
@@ -81,11 +84,17 @@ export default function AttendanceLog({
     setCurrentDate((prev) => {
       const newDate = new Date(prev);
       newDate.setDate(prev.getDate() + (direction === "next" ? 1 : -1));
-      console.log("Navigated Date:", newDate);
+      newDate.setHours(0, 0, 0, 0); // Ensure midnight
       return newDate;
     });
-    console.log("Navigating Date:", direction);
   };
+
+  // const formatDate = t("dateFormat", {
+  //   date: currentDate,
+  //   weekday: "",
+  //   day: "none",
+  //   month: "long",
+  // });
 
   // Update handleRemoveAttendance
   const handleRemoveAttendance = async (studentId: string) => {
@@ -147,12 +156,7 @@ export default function AttendanceLog({
                     if (date) {
                       const normalized = new Date(date);
                       normalized.setHours(0, 0, 0, 0); // Ensure midnight
-                      const utcDate = new Date(
-                        normalized.getTime() -
-                          normalized.getTimezoneOffset() * 60000
-                      );
-                      setCurrentDate(utcDate);
-                      console.log("Setting date from calendar:", utcDate);
+                      setCurrentDate(normalized);
                       const trigger = document.querySelector(
                         '[data-state="open"]'
                       );

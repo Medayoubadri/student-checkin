@@ -25,16 +25,15 @@ export async function GET(request: Request) {
 
   try {
     // const targetDate = new Date(date);
-    // targetDate.setHours(0, 0, 0, 0);
+    // targetDate.setUTCHours(0, 0, 0, 0);
 
     let students;
 
     if (date) {
       const dateObj = new Date(date);
-      // dateObj.setHours(0, 0, 0, 0);
-      console.log("Target Date:", dateObj);
+      dateObj.setUTCHours(0, 0, 0, 0);
       const nextDay = new Date(dateObj);
-      nextDay.setDate(nextDay.getDate() + 1);
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
 
       students = await prisma.student.findMany({
         where: {
