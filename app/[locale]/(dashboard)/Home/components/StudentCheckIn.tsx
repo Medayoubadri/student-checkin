@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +18,6 @@ import { useTranslations } from "next-intl";
 import { studentService } from "@/utils/studentService";
 import { attendanceService } from "@/utils/attendanceService";
 import { attendanceLogService } from "@/utils/attendanceLogService";
-import { attendanceHistoryService } from "@/utils/attendanceHistoryService";
 
 interface StudentCheckInProps {
   onCheckIn: () => void;
@@ -94,7 +93,6 @@ export function StudentCheckIn({
       });
 
       await markAttendance(newStudent.id);
-      attendanceHistoryService.invalidateCache();
       setShowAdditionalFields(false);
       setIsModalOpen(false);
       setAge("");
@@ -201,9 +199,11 @@ export function StudentCheckIn({
 
   return (
     <Card className="bg-background w-full">
-      <div className="px-6 py-4 pt-6">
-        <h2 className="font-semibold text-lg">{t("studentCheckIn")}</h2>
-      </div>
+      <CardHeader>
+        <CardTitle className="font-bold text-xl md:text-2xl text-center">
+          {t("studentCheckIn")}
+        </CardTitle>
+      </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="space-y-2">
@@ -329,8 +329,11 @@ export function StudentCheckIn({
         <NewStudentModal
           isOpen={isModalOpen}
           onClose={() => {
-            if (isLoading) {
+            if (!isLoading) {
               setIsModalOpen(false);
+              setAge("");
+              setGender("");
+              setPhoneNumber("");
             }
           }}
           onSubmit={handleSubmit}

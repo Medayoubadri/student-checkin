@@ -161,24 +161,24 @@ export function DownloadAttendance({ selectedDate }: DownloadAttendanceProps) {
       });
 
       // Style the header row
-      const headerRow = worksheet.getRow(7);
-      headerRow.font = { bold: true, name: "Carlito" };
-      headerRow.fill = {
-        type: "pattern",
-        pattern: "solid",
-        fgColor: { argb: "a6e2a6" },
-      };
+      // const headerRow = worksheet.getCell("A7:D7");
+      // headerRow.font = { bold: true, name: "Carlito" };
+      // headerRow.fill = {
+      //   type: "pattern",
+      //   pattern: "solid",
+      //   fgColor: { argb: "a6e2a6" },
+      // };
 
       // Set column widths
       worksheet.columns = [
         { width: 25 },
         { width: 5 },
         { width: 5 },
-        { width: 10 },
+        { width: 15 },
       ];
 
       // Set row heights
-      worksheet.getRow(1).height = 55; // Title row
+      worksheet.getRow(1).height = 60; // Title row
       worksheet.getRow(5).height = 30; // Teachers label row
       teachers
         .filter((t) => t)
