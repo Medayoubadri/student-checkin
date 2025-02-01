@@ -15,9 +15,7 @@ const formatDateKey = (date: Date) => {
   // Create date at midnight in local timezone
   const localDate = new Date(date);
   // Get YYYY-MM-DD in local timezone
-  return `${localDate.getFullYear()}-${String(
-    localDate.getMonth() + 1
-  ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
+  return localDate;
 };
 
 export const attendanceLogService = {
