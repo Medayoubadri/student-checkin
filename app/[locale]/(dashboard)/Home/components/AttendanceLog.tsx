@@ -34,11 +34,7 @@ export default function AttendanceLog({
   onAttendanceRemoved,
 }: AttendanceLogProps) {
   // Initialize currentDate with time set to midnight
-  const [currentDate, setCurrentDate] = useState(() => {
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
-    return date;
-  });
+  const [currentDate, setCurrentDate] = useState(new Date());
   console.log("Current Date:", currentDate);
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
   const [isLoading] = useState(false);
@@ -136,7 +132,7 @@ export default function AttendanceLog({
             <Popover>
               <PopoverTrigger asChild>
                 <CardTitle className="text-sm sm:text-base capitalize cursor-pointer">
-                  {f.dateTime(currentDate, {
+                  {f.dateTime(currentDate.setHours(0, 0, 0, 0), {
                     weekday: "long",
                     day: "numeric",
                     month: "long",
