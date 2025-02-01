@@ -112,6 +112,7 @@
     "selectColumn": "Select Column",
     "importing": "Importing...",
     "dataCleaningInfo": "Cleaning data...",
+    "dragAndDrop": "Drag 'n' drop a CSV file here, or click to select",
     "description": "Please upload a CSV file with the following columns: Full Name, Age, Gender and Phone",
     "toastitle-warning": "No file selected",
     "toastdescription": "Please select a CSV file to import.",
@@ -119,6 +120,25 @@
     "toastdescription-success": "Students have been imported successfully.",
     "toastitle-failed": "Error importing students",
     "toastdescription-failed": "An error occurred while importing students."
+  },
+  "ImportLogModal": {
+    "errorTitle": "Error Log",
+    "successTitle": "Success Log",
+    "totalRecords": "Total Records",
+    "cleanedRecords": "Cleaned Records",
+    "uniqueRecords": "Unique Records",
+    "processedRecords": "Processed Records",
+    "importedOrUpdatedRecords": "Imported/Updated Records",
+    "skippedRecords": "Skipped Records",
+    "skippedRecordsDetails": "Skipped Records Details",
+    "record": "Record",
+    "reason": "Reason"
+  },
+  "ProcessingScreen": {
+    "processingStep1": "Importing data...",
+    "processingStep2": "Cleaning data...",
+    "processingStep3": "Processing data...",
+    "processingStep4": "Saving data to database..."
   },
   "ImportModal": {
     "chooseFile": "Choose File",

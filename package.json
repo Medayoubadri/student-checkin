@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma migrate deploy && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
@@ -62,6 +62,7 @@
     "react-chartjs-2": "^5.3.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
+    "react-dropzone": "^14.3.5",
     "react-hook-form": "^7.54.2",
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.15.1",

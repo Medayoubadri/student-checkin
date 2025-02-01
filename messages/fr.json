@@ -107,13 +107,32 @@
     "selectColumn": "Sélectionner la colonne",
     "importing": "Importation...",
     "dataCleaningInfo": "Nettoyage des données...",
-    "description": "Veuillez sélectionner un fichier CSV à importer. Le fichier doit contenir les colonnes suivantes: Nom complet, Âge, Sexe et Numéro de téléphone.",
+    "dragAndDrop": "Glisser-déposer un fichier CSV ici ou cliquer pour sélectionner un fichier",
+    "description": "Veuillez importer un fichier CSV avec les colonnes suivantes : Nom complet, Âge, Sexe et Numéro de téléphone.",
     "toastitle-warning": "Aucun fichier sélectionné",
     "toastdescription": "Veuillez sélectionner un fichier CSV à importer.",
-    "toastitle-success": "List d'Étudiants importés",
-    "toastdescription-success": "La liste des étudiants ont été importés avec succès.",
+    "toastitle-success": "Liste d'Étudiants importés",
+    "toastdescription-success": "La liste des étudiants a été importée avec succès.",
     "toastitle-failed": "Erreur lors de l'importation de la liste",
     "toastdescription-failed": "Une erreur est survenue lors de l'importation de la liste des étudiants. Veuillez réessayer."
+  },
+  "ImportLogModal": {
+    "errorTitle": "Journal des erreurs",
+    "successTitle": "Journal des succès",
+    "totalRecords": "Total des enregistrements",
+    "cleanedRecords": "Enregistrements nettoyés",
+    "uniqueRecords": "Enregistrements uniques",
+    "processedRecords": "Enregistrements traités",
+    "importedOrUpdatedRecords": "Enregistrements importés/Mis à jour",
+    "skippedRecords": "Enregistrements omis",
+    "records": "Enregistrements",
+    "reason": "Raison"
+  },
+  "ProcessingScreen": {
+    "processingStep1": "Importation des données...",
+    "processingStep2": "Nettoyage des données...",
+    "processingStep3": "Traitement des données...",
+    "processingStep4": "Sauvegarde des données dans la base de données..."
   },
   "ImportModal": {
     "chooseFile": "Choisir un fichier",

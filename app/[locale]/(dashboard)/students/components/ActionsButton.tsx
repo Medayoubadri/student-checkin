@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,10 +8,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ImportStudentsModal } from "@/app/[locale]/(dashboard)/students/components/ImportStudentsModal";
-import { ExportOptionsModal } from "@/app/[locale]/(dashboard)/students/components/ExportOptionsModal";
+import { ImportStudentsModal } from "./ImportStudentsModal";
+import { ImportLogModal } from "./ImportLogModal";
+import { ExportOptionsModal } from "./ExportOptionsModal";
 import { useTranslations } from "next-intl";
 import { ArrowUpDownIcon, DownloadIcon, UploadIcon } from "lucide-react";
+import { ImportResult } from "@/types/import";
 
 export function ActionsButton({
   onImportComplete,
@@ -18,29 +22,36 @@ export function ActionsButton({
 }) {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const t = useTranslations("ActionsButton");
+
+  const handleImportComplete = (result: ImportResult) => {
+    setImportResult(result);
+    setIsLogModalOpen(true);
+    onImportComplete();
+  };
+
+  const handleLogModalClose = () => {
+    setIsLogModalOpen(false);
+    setIsImportModalOpen(false);
+  };
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline">
-            <ArrowUpDownIcon className="w-4 h-4" />
+            <ArrowUpDownIcon className="mr-2 w-4 h-4" />
             {t("actions")}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="bg-background p-2">
-          <DropdownMenuItem
-            onSelect={() => setIsImportModalOpen(true)}
-            className="cursor-pointer"
-          >
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onSelect={() => setIsImportModalOpen(true)}>
             <DownloadIcon className="mr-2 w-4 h-4" />
             {t("importStudents")}
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={() => setIsExportModalOpen(true)}
-            className="cursor-pointer"
-          >
+          <DropdownMenuItem onSelect={() => setIsExportModalOpen(true)}>
             <UploadIcon className="mr-2 w-4 h-4" />
             {t("exportStudents")}
           </DropdownMenuItem>
@@ -49,7 +60,12 @@ export function ActionsButton({
       <ImportStudentsModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
-        onImportComplete={onImportComplete}
+        onImportComplete={handleImportComplete}
+      />
+      <ImportLogModal
+        isOpen={isLogModalOpen}
+        onClose={handleLogModalClose}
+        importResult={importResult}
       />
       <ExportOptionsModal
         isOpen={isExportModalOpen}
