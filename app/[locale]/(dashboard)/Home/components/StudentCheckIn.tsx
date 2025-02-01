@@ -33,10 +33,15 @@ export function StudentCheckIn({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  const normalizeName = (name: string): string => {
+    return name.toLowerCase().split(" ").sort().join(" ");
+  };
+
   const handleCheck = async () => {
     try {
+      const normalizedName = normalizeName(name);
       const checkResponse = await fetch(
-        `/api/students?name=${encodeURIComponent(name)}`
+        `/api/students/check?name=${encodeURIComponent(normalizedName)}`
       );
       const existingStudent = await checkResponse.json();
 
@@ -154,18 +159,18 @@ export function StudentCheckIn({
                   }
                 }}
                 onChange={(e) => setName(e.target.value)}
-                className="bg-background dark:bg-zinc-900 pr-10 dark:border-none"
+                className="bg-background dark:bg-zinc-900 px-4 dark:border-none"
                 placeholder={t("fullName")}
                 required
               />
               {name && (
                 <Button
-                  variant="ghost"
+                  variant="default"
                   size="icon"
-                  className="top-0 right-0 absolute h-full"
+                  className="top-0 right-0 absolute bg-transparent hover:bg-transparent h-full text-destructive hover:text-red-500"
                   onClick={handleClearName}
                 >
-                  <X className="w-4 h-4" />
+                  <X className="mr-4 p-0 !w-5 !h-5" />
                 </Button>
               )}
             </div>

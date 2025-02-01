@@ -39,7 +39,14 @@
     "noAttendanceRecords": "No attendance records for today",
     "noRecentActivity": "No recent activity for today",
     "dateFormat": "{date, date, full}",
-    "totalAttendance": "{count, plural, =1 {# total attendance} other {# total attendances}}"
+    "totalAttendance": "{count, plural, =1 {# total attendance} other {# total attendances}}",
+    "previousDay": "Previous Day",
+    "nextDay": "Next Day",
+    "removeAttendance": "Remove Attendance",
+    "attendanceRemoved": "Attendance record removed",
+    "attendanceRemovedDescription": "Attendance record has been removed successfully.",
+    "errorRemovingAttendance": "Error removing attendance record",
+    "errorRemovingAttendanceDescription": "An error occurred while removing the attendance record."
   },
   "MetricsCards": {
     "totalStudents": "Total Students",
@@ -94,8 +101,17 @@
     "export": "Export"
   },
   "ImportStudentsModal": {
-    "title": "Import Students",
+    "title": "Import Students List",
+    "subtitle": "Please map the columns in the CSV file to the corresponding fields.",
     "import": "Import",
+    "next": "Next",
+    "name": "Full Name",
+    "age": "Age",
+    "gender": "Gender",
+    "phoneNumber": "Phone",
+    "selectColumn": "Select Column",
+    "importing": "Importing...",
+    "dataCleaningInfo": "Cleaning data...",
     "description": "Please upload a CSV file with the following columns: Full Name, Age, Gender and Phone",
     "toastitle-warning": "No file selected",
     "toastdescription": "Please select a CSV file to import.",

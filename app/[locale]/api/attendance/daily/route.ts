@@ -27,41 +27,68 @@ export async function GET(request: Request) {
     const targetDate = new Date(date);
     targetDate.setUTCHours(0, 0, 0, 0);
 
-    const attendanceData = await prisma.attendance.findMany({
-      where: {
-        date: targetDate,
-        student: {
+    let students;
+
+    if (date) {
+      const dateObj = new Date(date);
+      dateObj.setUTCHours(0, 0, 0, 0);
+      const nextDay = new Date(dateObj);
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+
+      students = await prisma.student.findMany({
+        where: {
           userId: session.user.id,
-        },
-      },
-      include: {
-        student: {
-          select: {
-            name: true,
-            age: true,
-            gender: true,
-            phoneNumber: true,
+          attendances: {
+            some: {
+              date: {
+                gte: dateObj,
+                lt: nextDay,
+              },
+            },
           },
         },
-      },
-      orderBy: {
-        date: "asc",
-      },
-    });
+        include: {
+          attendances: {
+            where: {
+              date: {
+                gte: dateObj,
+                lt: nextDay,
+              },
+            },
+            take: 1,
+          },
+        },
+      });
+    } else {
+      students = await prisma.student.findMany({
+        where: {
+          userId: session.user.id,
+        },
+        include: {
+          attendances: {
+            orderBy: { date: "desc" },
+            take: 1,
+          },
+        },
+      });
+    }
 
-    // console.log("Attendance Data:", attendanceData);
-
-    const formattedData = attendanceData.map((record) => ({
-      fullName: record.student.name,
-      age: record.student.age,
-      gender: record.student.gender,
-      phone: record.student.phoneNumber || "",
-      checkInTime: record.date ? record.date.toISOString() : "",
+    const studentsWithLastAttendance = students.map((student) => ({
+      ...student,
+      lastAttendance: student.attendances[0]?.date || null,
+      attendances: undefined,
+      fullName: student.name,
+      age: student.age,
+      gender: student.gender,
+      phone: student.phoneNumber || "",
+      checkInTime: student.attendances[0]?.date
+        ? student.attendances[0]?.date.toISOString()
+        : "", // Updated from 'record.date' to 'student.attendances[0]?.date'
     }));
 
     // console.log("Formatted Data:", formattedData);
 
-    return NextResponse.json(formattedData);
+    return NextResponse.json(studentsWithLastAttendance);
   } catch (error) {
     console.error("Error fetching daily attendance:", error);
     return NextResponse.json(

@@ -1,3 +1,4 @@
+// app/[locale]/api/import/route.ts
 import { NextResponse } from "next/server";
 import { parse } from "csv-parse/sync";
 import { PrismaClient } from "@prisma/client";
@@ -7,10 +8,32 @@ import { authOptions } from "@/lib/authOptions";
 const prisma = new PrismaClient();
 
 interface CSVRecord {
+  [key: string]: string;
+}
+
+interface ColumnMapping {
+  [key: string]: string;
+}
+
+interface CleanedStudent {
   name: string;
-  age: string;
+  age: number;
   gender: string;
   phoneNumber?: string;
+}
+
+function cleanData(data: string): string {
+  // Remove any non-alphanumeric characters except spaces and hyphens
+  return data.replace(/[^a-zA-Z0-9\s-]/g, "").trim();
+}
+
+function normalizePhoneNumber(phone: string): string {
+  // Remove all non-digit characters
+  return phone.replace(/\D/g, "");
+}
+
+function normalizeName(name: string): string {
+  return name.toLowerCase().split(" ").sort().join(" ");
 }
 
 export async function POST(req: Request) {
@@ -23,10 +46,16 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
+    const columnMappingString = formData.get("columnMapping") as string;
 
-    if (!file) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    if (!file || !columnMappingString) {
+      return NextResponse.json(
+        { error: "Missing file or column mapping" },
+        { status: 400 }
+      );
     }
+
+    const columnMapping: ColumnMapping = JSON.parse(columnMappingString);
 
     const fileContent = await file.text();
     const records = parse(fileContent, {
@@ -34,18 +63,57 @@ export async function POST(req: Request) {
       skip_empty_lines: true,
     }) as CSVRecord[];
 
+    const cleanedRecords: CleanedStudent[] = records.map(
+      (record: CSVRecord) => ({
+        name: cleanData(record[columnMapping.name]),
+        age: Number.parseInt(cleanData(record[columnMapping.age])),
+        gender: cleanData(record[columnMapping.gender]),
+        phoneNumber: columnMapping.phoneNumber
+          ? normalizePhoneNumber(record[columnMapping.phoneNumber])
+          : undefined,
+      })
+    );
+
+    // Remove duplicates and handle flipped names
+    const uniqueRecords = Array.from(
+      new Map(
+        cleanedRecords.map((record) => [normalizeName(record.name), record])
+      ).values()
+    );
+
     const importedStudents = await Promise.all(
-      records.map((record: CSVRecord) =>
-        prisma.student.create({
-          data: {
-            name: record.name,
-            age: Number.parseInt(record.age),
-            gender: record.gender,
-            phoneNumber: record.phoneNumber,
+      uniqueRecords.map(async (record: CleanedStudent) => {
+        // Check if a student with the same name (or flipped name) already exists
+        const existingStudent = await prisma.student.findFirst({
+          where: {
             userId: session.user.id,
+            name: {
+              contains: record.name.split(" ")[0],
+              mode: "insensitive",
+            },
           },
-        })
-      )
+        });
+
+        if (existingStudent) {
+          // Update existing student
+          return prisma.student.update({
+            where: { id: existingStudent.id },
+            data: {
+              age: record.age,
+              gender: record.gender,
+              phoneNumber: record.phoneNumber,
+            },
+          });
+        } else {
+          // Create new student
+          return prisma.student.create({
+            data: {
+              ...record,
+              userId: session.user.id,
+            },
+          });
+        }
+      })
     );
 
     return NextResponse.json({
@@ -57,7 +125,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         error:
-          "Failed to import students. Please check your CSV file and try again.",
+          "Failed to import students. Please check your CSV file and column mapping, then try again.",
       },
       { status: 500 }
     );
