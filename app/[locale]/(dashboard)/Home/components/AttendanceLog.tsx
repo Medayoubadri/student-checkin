@@ -15,6 +15,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { attendanceLogService } from "@/utils/attendanceLogService";
+import { attendanceHistoryService } from "@/utils/attendanceHistoryService";
 
 interface AttendanceEntry {
   fullName: string;
@@ -42,6 +43,7 @@ export default function AttendanceLog({
   const f = useFormatter();
 
   useEffect(() => {
+    attendanceHistoryService.invalidateCache();
     fetchAttendanceData(currentDate);
   }, [currentDate, refreshTrigger]);
 
@@ -98,6 +100,7 @@ export default function AttendanceLog({
       setAttendanceData((prev) =>
         prev.filter((entry) => entry.id !== studentId)
       );
+      attendanceHistoryService.invalidateCache();
       await attendanceLogService.removeAttendance(studentId, currentDate);
       toast({
         title: t("attendanceRemoved"),

@@ -9,6 +9,7 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
+import { CustomTooltip } from "./CustomTooltip";
 
 interface AttendanceData {
   date: string;
@@ -29,12 +30,19 @@ export function AttendanceChart({ data }: AttendanceChartProps) {
       <CardContent>
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data} width={300} height={100}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip />
-              <Line dataKey="attendance" fill="#8884d8" />
+              <Tooltip content={<CustomTooltip />} />
+              <Line
+                type="monotone"
+                dataKey="attendance"
+                stroke="#278f27"
+                strokeWidth={2}
+                dot={{ fill: "#278f27", stroke: "#fff", strokeWidth: 2 }}
+                isAnimationActive={true}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
