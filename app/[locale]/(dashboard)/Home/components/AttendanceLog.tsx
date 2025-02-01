@@ -77,11 +77,11 @@ export default function AttendanceLog({ refreshTrigger }: AttendanceLogProps) {
     }
   };
 
-  const isNewStudent = (studentId: string) => {
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 2);
-    return oneWeekAgo <= currentDate;
-  };
+  // const isNewStudent = (studentId: Date) => {
+  //   const oneWeekAgo = new Date();
+  //   oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
+  //   return oneWeekAgo <= new Date(studentId);
+  // };
 
   const navigateDate = (direction: "prev" | "next") => {
     setCurrentDate((prev) => {
@@ -165,11 +165,11 @@ export default function AttendanceLog({ refreshTrigger }: AttendanceLogProps) {
               className="flex justify-between items-center py-2 border-b border-border last:border-b-0"
             >
               <div className="flex items-center gap-4">
-                <div
+                {/* <div
                   className={`w-2 h-2 rounded-full ${
-                    isNewStudent(entry.id) ? "bg-emerald-500" : "bg-white"
+                    isNewStudent(currentDate) ? "bg-emerald-500" : "bg-white"
                   }`}
-                />
+                /> */}
                 <span className="font-medium text-sm">{entry.fullName}</span>
               </div>
               <div className="text-muted-foreground text-sm">
