@@ -6,7 +6,8 @@ export default createMiddleware(routing);
 export const config = {
   matcher: [
     "/", // The index route
-    "/api/auth/:path*",
+    "/auth/:path*",
+    "/api/:path*",
     "/Home/:path*",
     "/students/:path*",
     "/(fr|en)/:path*",
