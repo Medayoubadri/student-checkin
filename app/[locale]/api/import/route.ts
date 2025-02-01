@@ -6,7 +6,12 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
 
 // Increase timeout and set response limit
-export const maxDuration = 60;
+export const config = {
+  api: {
+    responseLimit: false,
+  },
+  maxDuration: 300,
+};
 
 const prisma = new PrismaClient();
 
@@ -26,12 +31,10 @@ interface CleanedStudent {
 }
 
 function cleanData(data: string): string {
-  // Remove any non-alphanumeric characters except spaces and hyphens
   return data.replace(/[^a-zA-Z0-9\s-]/g, "").trim();
 }
 
 function normalizePhoneNumber(phone: string): string {
-  // Remove all non-digit characters
   return phone.replace(/\D/g, "");
 }
 
@@ -66,71 +69,85 @@ export async function POST(req: Request) {
       skip_empty_lines: true,
     }) as CSVRecord[];
 
-    const cleanedRecords: CleanedStudent[] = records.map(
-      (record: CSVRecord) => ({
-        name: cleanData(record[columnMapping.name]),
-        age: Number.parseInt(cleanData(record[columnMapping.age])),
-        gender: cleanData(record[columnMapping.gender]),
-        phoneNumber: columnMapping.phoneNumber
-          ? normalizePhoneNumber(record[columnMapping.phoneNumber])
-          : undefined,
-      })
-    );
+    const batchSize = 100; // Process 100 records at a time
+    let totalImported = 0;
 
-    // Remove duplicates and handle flipped names
-    const uniqueRecords = Array.from(
-      new Map(
-        cleanedRecords.map((record) => [normalizeName(record.name), record])
-      ).values()
-    );
-
-    const importedStudents = await Promise.all(
-      uniqueRecords.map(async (record: CleanedStudent) => {
-        // Check if a student with the same name (or flipped name) already exists
-        const existingStudent = await prisma.student.findFirst({
-          where: {
-            userId: session.user.id,
-            name: {
-              contains: record.name.split(" ")[0],
-              mode: "insensitive",
-            },
-          },
-        });
-
-        if (existingStudent) {
-          // Update existing student
-          return prisma.student.update({
-            where: { id: existingStudent.id },
-            data: {
-              age: record.age,
-              gender: record.gender,
-              phoneNumber: record.phoneNumber,
-            },
-          });
-        } else {
-          // Create new student
-          return prisma.student.create({
-            data: {
-              ...record,
-              userId: session.user.id,
-            },
-          });
-        }
-      })
-    );
+    for (let i = 0; i < records.length; i += batchSize) {
+      const batch = records.slice(i, i + batchSize);
+      const importedCount = await processBatch(
+        batch,
+        columnMapping,
+        session.user.id
+      );
+      totalImported += importedCount;
+    }
 
     return NextResponse.json({
       message: "Students imported successfully",
-      count: importedStudents.length,
+      count: totalImported,
     });
   } catch (error) {
     console.error("Error importing students:", error);
-    return NextResponse.json(
-      {
-        error:
-          "Failed to import students. Please check your CSV file and column mapping, then try again.",
-      },
-      { status: 500 }
-    );
+    let errorMessage =
+      "Failed to import students. Please check your CSV file and column mapping, then try again.";
+    if (error instanceof Error) {
+      errorMessage += ` Error details: ${error.message}`;
+    }
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
+}
+
+async function processBatch(
+  batch: CSVRecord[],
+  columnMapping: ColumnMapping,
+  userId: string
+) {
+  const cleanedRecords: CleanedStudent[] = batch.map((record: CSVRecord) => ({
+    name: cleanData(record[columnMapping.name]),
+    age: Number.parseInt(cleanData(record[columnMapping.age])),
+    gender: cleanData(record[columnMapping.gender]),
+    phoneNumber: columnMapping.phoneNumber
+      ? normalizePhoneNumber(record[columnMapping.phoneNumber])
+      : undefined,
+  }));
+
+  const uniqueRecords = Array.from(
+    new Map(
+      cleanedRecords.map((record) => [normalizeName(record.name), record])
+    ).values()
+  );
+
+  const importedStudents = await Promise.all(
+    uniqueRecords.map(async (record: CleanedStudent) => {
+      const existingStudent = await prisma.student.findFirst({
+        where: {
+          userId: userId,
+          name: {
+            contains: record.name.split(" ")[0],
+            mode: "insensitive",
+          },
+        },
+      });
+
+      if (existingStudent) {
+        return prisma.student.update({
+          where: { id: existingStudent.id },
+          data: {
+            age: record.age,
+            gender: record.gender,
+            phoneNumber: record.phoneNumber,
+          },
+        });
+      } else {
+        return prisma.student.create({
+          data: {
+            ...record,
+            userId: userId,
+          },
+        });
+      }
+    })
+  );
+
+  return importedStudents.length;
 }

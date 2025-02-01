@@ -103,7 +103,7 @@ export function ImportStudentsModal({
       console.error("Error importing students:", error);
       toast({
         title: t("toastitle-failed"),
-        description: t("toastdescription-failed"),
+        description: t("toastdescription-failed") + error,
         variant: "destructive",
       });
     } finally {
