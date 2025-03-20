@@ -13,15 +13,7 @@ import { useTranslations } from "next-intl";
 import { DeleteConfirmationDialog } from "./components/DeleteConfirmationDialog";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-
-interface Student {
-  id: string;
-  name: string;
-  age: number;
-  gender: string;
-  phoneNumber: string;
-  createdAt: string;
-}
+import { Student } from "@/types/import";
 
 export default function StudentsPage() {
   const { status } = useSession();

@@ -90,6 +90,8 @@ export function StudentCheckIn({
         age: Number(submittedAge),
         gender: submittedGender,
         phoneNumber: submittedPhoneNumber,
+        image: "",
+        createdAt: "",
       });
 
       await markAttendance(newStudent.id);

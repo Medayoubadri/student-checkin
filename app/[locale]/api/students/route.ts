@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, age, gender, phoneNumber } = await request.json();
+  const { name, age, gender, phoneNumber, image } = await request.json();
 
   try {
     const student = await prisma.student.create({
@@ -22,6 +22,7 @@ export async function POST(request: Request) {
         age,
         gender,
         phoneNumber: phoneNumber ? phoneNumber.toString() : null,
+        image,
         userId: session.user.id,
       },
     });
@@ -130,8 +131,7 @@ export async function PUT(request: Request) {
   }
 
   try {
-    const { id, name, age, gender, phoneNumber } = await request.json();
-    // Check if a student with the same name already exists (excluding the current student)
+    const { id, name, age, gender, phoneNumber, image } = await request.json();
     const existingStudent = await prisma.student.findFirst({
       where: {
         name,
@@ -151,7 +151,7 @@ export async function PUT(request: Request) {
 
     const updatedStudent = await prisma.student.update({
       where: { id, userId: session.user.id },
-      data: { name, age, gender, phoneNumber },
+      data: { name, age, gender, phoneNumber, image },
     });
     return NextResponse.json(updatedStudent);
   } catch (error) {
@@ -181,12 +181,10 @@ export async function DELETE(request: Request) {
   }
 
   try {
-    // First, delete all attendances associated with the student
     await prisma.attendance.deleteMany({
       where: { studentId: id },
     });
 
-    // Then, delete the student
     await prisma.student.delete({
       where: { id, userId: session.user.id },
     });

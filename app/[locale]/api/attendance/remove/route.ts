@@ -5,6 +5,8 @@ import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
+// DELETE request for removing attendance record 
+
 export async function DELETE(request: Request) {
   const session = await getServerSession(authOptions);
 

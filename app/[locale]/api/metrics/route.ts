@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
+// GET request for fetching student metrics 
 export async function GET() {
   const session = await getServerSession(authOptions);
 

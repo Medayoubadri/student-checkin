@@ -1,12 +1,5 @@
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { XAxis, AreaChart, Area, ResponsiveContainer, YAxis } from "recharts";
+import { ChartTooltip } from "@/components/ui/chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import { CustomTooltip } from "./CustomTooltip";
@@ -31,20 +24,30 @@ export function AttendanceChart({ data }: AttendanceChartProps) {
       <CardContent>
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} width={300} height={100}>
-              <CartesianGrid strokeDasharray="3 3" />
+            <AreaChart
+              data={data}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="0.9">
+                  <stop offset="1%" stopColor="#18af52" stopOpacity={0.8} />
+                  <stop offset="100%" stopColor="#18af52" stopOpacity={0.04} />
+                </linearGradient>
+              </defs>
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip content={<CustomTooltip />} />
-              <Line
+              <ChartTooltip cursor={false} content={<CustomTooltip />} />
+              <Area
                 type="monotone"
                 dataKey="attendance"
-                stroke="#278f27"
+                stroke="#18af52"
                 strokeWidth={2}
-                dot={{ fill: "#278f27", stroke: "#fff", strokeWidth: 2 }}
+                fill="url(#colorUv)"
+                name="Attendance"
                 isAnimationActive={true}
+                animationDuration={500}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </CardContent>

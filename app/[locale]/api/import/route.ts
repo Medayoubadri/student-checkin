@@ -9,14 +9,17 @@ export const maxDuration = 60;
 
 const prisma = new PrismaClient();
 
+// Interface for CSV records where keys are defined dynamically
 interface CSVRecord {
   [key: string]: string;
 }
 
+// Interface to map CSV columns to respective data properties
 interface ColumnMapping {
   [key: string]: string;
 }
 
+// Interface to map CSV columns to respective data properties
 interface CleanedStudent {
   name: string;
   age: number;
@@ -24,19 +27,23 @@ interface CleanedStudent {
   phoneNumber?: string;
 }
 
+// Function to clean data by removing unwanted characters
 function cleanData(data: string): string {
   return data.replace(/[^a-zA-Z0-9\s-]/g, "").trim();
 }
 
+// Function to normalize phone numbers to a standard format
 function normalizePhoneNumber(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   return digits.length === 10 ? digits : "";
 }
 
+// Function to normalize names by standardizing case and formatting
 function normalizeName(name: string): string {
   return name.toLowerCase().split(" ").filter(Boolean).sort().join(" ");
 }
 
+// Function to validate and clean age input
 function validateAge(age: string): number | null {
   const cleanedAge = cleanData(age);
   const parsedAge = Number.parseInt(cleanedAge, 10);
@@ -45,11 +52,13 @@ function validateAge(age: string): number | null {
     : null;
 }
 
+// Function to validate and clean gender input
 function validateGender(gender: string): string {
   const normalizedGender = gender.toLowerCase().trim();
   return ["Male", "Female"].includes(normalizedGender) ? normalizedGender : "";
 }
 
+// POST request handler to import students from a CSV file
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
 

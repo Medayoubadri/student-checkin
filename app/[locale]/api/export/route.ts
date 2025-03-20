@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
+// GET request for exporting students to CSV or Excel
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
 
