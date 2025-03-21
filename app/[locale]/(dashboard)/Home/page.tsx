@@ -12,6 +12,7 @@ import { metricsService } from "@/utils/metricsService";
 import { attendanceHistoryService } from "@/utils/attendanceHistoryService";
 import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
+import { attendanceLogService } from "@/utils/attendanceLogService";
 
 interface Metrics {
   totalStudents: number;
@@ -42,6 +43,7 @@ export default function HomePage() {
     // Invalidate cache before fetching new data
     metricsService.invalidateCache();
     attendanceHistoryService.invalidateCache();
+    attendanceLogService.invalidateTotalCache();
     try {
       const metricsdata = await metricsService.getMetrics();
       const attendanceData = await attendanceHistoryService.getHistory();

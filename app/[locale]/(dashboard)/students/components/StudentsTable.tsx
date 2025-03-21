@@ -43,6 +43,7 @@ interface Student {
   age: number;
   gender: string;
   phoneNumber: string;
+  image: string;
   createdAt: string;
 }
 
