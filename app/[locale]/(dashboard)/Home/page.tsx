@@ -26,6 +26,12 @@ interface AttendanceData {
   attendance: number;
 }
 
+// Main component for the Home page
+// This component fetches and displays various metrics related to student attendance
+// It includes a check-in feature, attendance log, and a chart for visualizing attendance data
+// It also handles optimistic updates for the metrics and refreshes the data periodically
+// The component uses the `useSession` hook to manage user authentication state
+// It also uses the `useTranslations` hook for internationalization
 export default function HomePage() {
   const { status } = useSession();
   const t = useTranslations("HomePage");
@@ -82,11 +88,14 @@ export default function HomePage() {
     setTimeout(fetchMetrics, 3000); // Refresh after 3 seconds (may need to increase in production depending on the Server response time)
   };
 
+  // Function to refresh recent activity
   const refreshRecentActivity = () => {
     setRefreshTrigger((prev) => prev + 1);
     fetchMetrics();
   };
 
+  // Effect to fetch metrics data on component mount and user authentication
+  // It also sets up an interval to fetch data every minute
   useEffect(() => {
     if (status === "authenticated") {
       fetchMetrics();
@@ -96,6 +105,7 @@ export default function HomePage() {
     }
   }, [status, fetchMetrics]);
 
+  // Show loading skeleton while data is being fetched
   if (status === "loading") {
     return (
       <div className="flex items-center w-full">
@@ -108,17 +118,21 @@ export default function HomePage() {
     <div className="flex flex-col items-center gap-4 md:mt-0 p-4 md:p-6 w-full h-full overflow-y-auto">
       <div className="flex flex-col items-center gap-4 w-full lg:max-w-7xl">
         <div className="flex lg:flex-row flex-col gap-4 w-full">
+          {/* Student Check-in component for checking in students */}
           <StudentCheckIn
             onCheckIn={() => handleOptimisticMetrics(true)}
             refreshRecentActivity={refreshRecentActivity}
           />
+          {/* Attendance log component for displaying attendance records */}
           <AttendanceLog
             refreshTrigger={refreshTrigger}
             onAttendanceRemoved={fetchMetrics}
           />
         </div>
+        {/* Metrics cards displaying various attendance metrics */}
         <MetricsCards metrics={metrics} />
         <div className="hidden lg:block flex-1 w-full">
+          {/* Attendance chart for visualizing attendance data */}
           <AttendanceChart
             data={attendanceData}
             onDataUpdate={refreshRecentActivity}

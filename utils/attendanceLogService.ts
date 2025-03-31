@@ -1,5 +1,6 @@
 // app/services/attendanceLogService.ts
 
+// Service for managing detailed attendance logs with caching
 interface AttendanceEntry {
   fullName: string;
   id: string;
@@ -20,6 +21,7 @@ const formatDateKey = (date: Date) => {
 };
 
 export const attendanceLogService = {
+  // Fetches daily attendance records with date-based caching
   async getDailyAttendance(date: Date): Promise<AttendanceEntry[]> {
     const dateKey = formatDateKey(date);
     const cacheKey = `${DAILY_CACHE_KEY}-${dateKey}`;
@@ -57,6 +59,7 @@ export const attendanceLogService = {
     }
   },
 
+  // Retrieves total attendance counts for multiple students
   async getTotalAttendances(
     studentIds: string[]
   ): Promise<{ [key: string]: number }> {
@@ -104,6 +107,7 @@ export const attendanceLogService = {
     }
   },
 
+  // Removes attendance record with optimistic updates
   async removeAttendance(studentId: string, date: Date): Promise<void> {
     const dateKey = date;
     const dailyCacheKey = `${DAILY_CACHE_KEY}-${dateKey}`;
@@ -156,6 +160,7 @@ export const attendanceLogService = {
     }
   },
 
+  // Cache management methods
   invalidateTotalCache() {
     // Get all localStorage keys
     for (let i = 0; i < localStorage.length; i++) {

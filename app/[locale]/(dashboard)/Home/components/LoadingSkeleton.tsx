@@ -1,3 +1,4 @@
+// Component for loading skeletons in the dashboard
 export function LoadingSkeleton() {
   return (
     <div className="flex flex-col items-center gap-4 md:mt-0 p-4 md:p-6 w-full h-full overflow-y-hidden">

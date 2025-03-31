@@ -29,6 +29,10 @@ interface Student {
   name: string;
 }
 
+// StudentCheckIn component for checking in students
+// This component allows the user to search for a student by name
+// and mark their attendance. If the student is not found, it provides a form
+// to add a new student and mark their attendance on mobile devices and a modal for desktop devices.
 export function StudentCheckIn({
   onCheckIn,
   refreshRecentActivity,
@@ -45,10 +49,16 @@ export function StudentCheckIn({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  // Normalize the name by converting to lowercase, splitting by spaces,
+  // sorting the words, and joining them back together
   const normalizeName = (name: string): string => {
     return name.toLowerCase().split(" ").sort().join(" ");
   };
 
+  // Handle the check-in process
+  // This function checks if the student exists in the database
+  // If the student exists, it marks their attendance
+  // If the student does not exist, it opens a modal or shows additional fields
   const handleCheck = async () => {
     try {
       const normalizedName = normalizeName(name);
@@ -77,6 +87,8 @@ export function StudentCheckIn({
     }
   };
 
+  // Handle the submission of the new student form
+  // This function creates a new student and marks their attendance
   const handleSubmit = async (
     submittedName: string,
     submittedAge: string,
@@ -94,7 +106,9 @@ export function StudentCheckIn({
         createdAt: "",
       });
 
+      // Mark attendance for the new student
       await markAttendance(newStudent.id);
+      // reset form fields
       setShowAdditionalFields(false);
       setIsModalOpen(false);
       setAge("");
@@ -112,9 +126,12 @@ export function StudentCheckIn({
     }
   };
 
+  // Mark attendance for the student
+  // This function sends a request to the server to mark the student's attendance
   const markAttendance = async (studentId: string) => {
     try {
       // Optimistically invalidate cache before API call
+      // to make the UI feel more responsive
       const result = await attendanceService.markAttendance(studentId);
       switch (result.status) {
         case 200:
@@ -148,6 +165,10 @@ export function StudentCheckIn({
     }
   };
 
+  // Fetch student suggestions based on the input name
+  // This function sends a request to the server to get a list of students
+  // that match the input name
+  // It uses a debounce function to limit the number of requests sent to the server while typing
   const fetchSuggestions = useCallback(async (query: string) => {
     try {
       setIsLoading(true);
@@ -161,6 +182,7 @@ export function StudentCheckIn({
     }
   }, []);
 
+  // Debounce the fetchSuggestions function to prevent excessive API calls
   const debouncedFetch = useDebounce(fetchSuggestions, 300);
 
   // Update handleInputChange to prevent unnecessary state updates
@@ -176,11 +198,13 @@ export function StudentCheckIn({
     }
   };
 
+  // Clear the name input and suggestions
   const handleClearName = () => {
     setName("");
     setSuggestions([]);
   };
 
+  // Handle the selection of a student from the suggestions
   const handleSelect = async (student: Student) => {
     setName(student.name);
     setSuggestions([]);
@@ -209,13 +233,13 @@ export function StudentCheckIn({
                 placeholder={t("startTypingStudentName")}
               />
               {suggestions.length > 0 && (
-                <Card className="z-10 absolute mt-1 w-full">
+                <Card className="z-10 absolute shadow-2xl mt-1 border w-full overflow-hidden">
                   <CardContent className="p-0">
                     <ul className="bg-background px-2 py-2 rounded-xl max-h-60 overflow-auto">
                       {suggestions.map((student) => (
                         <li
                           key={student.id}
-                          className="hover:bg-gray-100/10 px-4 py-2 rounded-md cursor-pointer"
+                          className="hover:bg-primary/50 px-4 py-2 rounded-md cursor-pointer"
                           onClick={() => handleSelect(student)}
                         >
                           {student.name}
@@ -338,6 +362,7 @@ export function StudentCheckIn({
   );
 }
 
+// Debounce function to limit the rate at which a function can fire
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function useDebounce(callback: Function, delay: number) {
   const timerRef = useRef<number>();

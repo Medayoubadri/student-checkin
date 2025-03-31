@@ -19,6 +19,9 @@ interface MetricsCardsProps {
   metrics: Metrics;
 }
 
+// This component renders a set of cards displaying various metrics related to attendance and students
+// It uses the `useCountAnimation` hook to animate the display of numbers
+// The metrics include total students, today's attendance, average attendance, and total attendance
 export function MetricsCards({ metrics }: MetricsCardsProps) {
   const t = useTranslations("MetricsCards");
 

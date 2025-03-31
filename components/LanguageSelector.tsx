@@ -10,6 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// This component provides a language selector for switching between languages
+// It uses Next.js router and next-intl for localization
 export function LanguageSelector() {
   const router = useRouter();
   const pathname = usePathname();

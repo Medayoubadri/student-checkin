@@ -16,6 +16,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 
+// This is the sign-in page
 export default function SignIn() {
   const t = useTranslations("Auth");
   const params = useParams();
@@ -43,18 +44,18 @@ export default function SignIn() {
                 height={80}
               />
             </div>
-            <h1 className="font-bold text-4xl text-center text-primary md:text-5xl">
+            <h1 className="font-bold text-primary text-4xl md:text-5xl text-center">
               {t("title")}
             </h1>
           </CardTitle>
-          <CardDescription className="text-center text-lg">
+          <CardDescription className="text-lg text-center">
             {t("description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
           <Button
             variant="outline"
-            className="py-6 w-full md:max-w-md text-lg transition-all hover:scale-105"
+            className="py-6 w-full md:max-w-md text-lg hover:scale-105 transition-all"
             onClick={() => handleSignIn("google")}
           >
             <Mail className="mr-2 w-5 h-5" />
@@ -62,7 +63,7 @@ export default function SignIn() {
           </Button>
           <Button
             variant="outline"
-            className="py-6 w-full md:max-w-md text-lg transition-all hover:scale-105"
+            className="py-6 w-full md:max-w-md text-lg hover:scale-105 transition-all"
             onClick={() => handleSignIn("github")}
           >
             <Github className="mr-2 w-5 h-5" />

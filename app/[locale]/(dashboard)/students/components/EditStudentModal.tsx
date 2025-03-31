@@ -26,6 +26,8 @@ interface EditStudentModalProps {
   onSave: (updatedStudent: Student) => void;
 }
 
+// EditStudentModal component for editing student details
+// This component is a modal dialog that allows the user to input student details
 export function EditStudentModal({
   student,
   isOpen,

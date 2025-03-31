@@ -5,6 +5,8 @@ import {
   NameType,
 } from "recharts/types/component/DefaultTooltipContent";
 
+// CustomTooltip component for rendering tooltips in charts
+// This component is used to display additional information when hovering over chart elements
 export const CustomTooltip = ({
   active,
   payload,

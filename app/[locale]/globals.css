@@ -75,6 +75,14 @@ body {
   * {
     @apply border-border;
   }
+
+  input:focus,
+  textarea:focus,
+  select:focus,
+  button:focus {
+    @apply outline-none ring-0 focus:ring-0 focus:ring-offset-0;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -102,3 +110,25 @@ body {
   @apply bg-zinc-700;
   @apply cursor-pointer;
 }
+/*
+
+.hero-image-wrapper {
+  position: relative;
+  perspective: 900px;
+}
+
+.hero-image {
+  transform: rotateX(20deg) scale(1);
+  transition: all 0.5s ease-in-out;
+  will-change: transform;
+
+  backface-visibility: hidden;
+}
+
+.hero-image.scrolled {
+  transform: rotate(0deg) scale(1) translateY(-20px);
+  transition: transform 0.5s ease-in-out;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+*/

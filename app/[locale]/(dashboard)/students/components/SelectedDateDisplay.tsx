@@ -8,12 +8,15 @@ interface SelectedDateDisplayProps {
   onClear: () => void;
 }
 
+// SelectedDateDisplay component for displaying the selected date
 export function SelectedDateDisplay({
   selectedDate,
   onClear,
 }: SelectedDateDisplayProps) {
   const t = useTranslations("SelectedDateDisplay");
 
+  // Format the selected date using the provided translation key
+  // The date is formatted to include the weekday, year, month, and day
   if (!selectedDate) return null;
   const formattedDate = t("dateFormat", {
     date: selectedDate,

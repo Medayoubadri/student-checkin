@@ -15,6 +15,7 @@ interface DeleteConfirmationDialogProps {
   itemName: string;
 }
 
+// DeleteConfirmationDialog component for confirming deletion actions
 export function DeleteConfirmationDialog({
   isOpen,
   onClose,

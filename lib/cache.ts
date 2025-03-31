@@ -1,12 +1,13 @@
 // lib/cache.ts
 import { Redis } from "@upstash/redis";
 
+// Redis client instance for server-side caching
 export const redis = new Redis({
   url: process.env.UPSTASH_REDIS_URL!,
   token: process.env.UPSTASH_REDIS_TOKEN!,
 });
 
-// Simple cache wrapper
+// Generic cache wrapper for Redis operations with TTL support
 export async function cachedQuery<T>(
   key: string,
   query: () => Promise<T>,

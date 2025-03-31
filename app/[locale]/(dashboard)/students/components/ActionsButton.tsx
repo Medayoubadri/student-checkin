@@ -15,6 +15,9 @@ import { useTranslations } from "next-intl";
 import { ArrowUpDownIcon, DownloadIcon, UploadIcon } from "lucide-react";
 import { ImportResult } from "@/types/import";
 
+// ActionsButton component for managing student data
+// This component provides options to import and export student data
+// It includes modals for importing students, viewing import logs, and exporting options
 export function ActionsButton({
   onImportComplete,
 }: {
@@ -26,12 +29,14 @@ export function ActionsButton({
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const t = useTranslations("ActionsButton");
 
+  // Function to handle the completion of the import process
   const handleImportComplete = (result: ImportResult) => {
     setImportResult(result);
     setIsLogModalOpen(true);
     onImportComplete();
   };
 
+  // Function to handle closing the log modal
   const handleLogModalClose = () => {
     setIsLogModalOpen(false);
     setIsImportModalOpen(false);

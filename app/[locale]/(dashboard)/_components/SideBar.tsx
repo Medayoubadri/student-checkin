@@ -20,6 +20,10 @@ import { redirect, usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
+// Sidebar component for the dashboard layout
+// This component is responsible for rendering the sidebar navigation menu
+// It includes links to different sections of the application and a sign-out button
+// It also handles the sign-out functionality
 export function AppSidebar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const pathname = usePathname();
@@ -37,6 +41,7 @@ export function AppSidebar() {
   ];
   return (
     <>
+      {/* Sidebar for larger screens */}
       {!isMobile && (
         <Sidebar className="flex border-none w-64">
           <SidebarHeader>
@@ -65,7 +70,7 @@ export function AppSidebar() {
                   >
                     <Link
                       href={item.href}
-                      className="flex items-center hover:dark:bg-emerald-900/30 hover:bg-white active:!bg-white active:dark:!bg-emerald-900 mb-2 px-4 py-6 rounded-md"
+                      className="flex items-center hover:bg-white hover:dark:bg-emerald-900/30 active:!bg-white active:dark:!bg-emerald-900 mb-2 px-4 py-6 rounded-md"
                     >
                       <item.icon className="mr-2 !w-6 !h-6" />
                       {item.label}
@@ -87,6 +92,7 @@ export function AppSidebar() {
           </SidebarFooter>
         </Sidebar>
       )}
+      {/* The sidebar is hidden on mobile devices and replaced with a bottom navigation bar */}
       {isMobile && (
         <nav className="right-0 bottom-0 left-0 z-50 fixed flex justify-around items-center bg-background shadow-[0px_-3px_15px_rgba(0,0,0,0.10)] p-2">
           {menuItems.map((item) => (

@@ -34,6 +34,12 @@ interface DataRecords {
   phone: string;
 }
 
+// DownloadAttendance component for downloading attendance reports
+// This component allows the user to select a date and download attendance data for that date
+// It includes a modal dialog for selecting the date and entering teacher names
+// It also handles the download of the attendance report in Excel format
+// The component uses the ExcelJS library to create and format the Excel file
+// The file is then saved using the file-saver library
 export function DownloadAttendance({ selectedDate }: DownloadAttendanceProps) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,26 +48,32 @@ export function DownloadAttendance({ selectedDate }: DownloadAttendanceProps) {
   const t = useTranslations("DownloadAttendance");
   const format = useFormatter();
 
+  // This function handles the change in teacher names
   const handleTeacherChange = (index: number, value: string) => {
     const newTeachers = [...teachers];
     newTeachers[index] = value;
     setTeachers(newTeachers);
   };
 
+  // This function adds a new teacher input field
   const addTeacherField = () => {
     setTeachers([...teachers, ""]);
   };
 
+  // This function removes a teacher input field
   const removeTeacherField = (index: number) => {
     const newTeachers = teachers.filter((_, i) => i !== index);
     setTeachers(newTeachers);
   };
 
+  // This function resets the form to its initial state
   const resetForm = useCallback(() => {
     setTeachers([""]);
     setDownloadDate(selectedDate);
   }, [selectedDate]);
 
+  // This effect runs when the modal is closed, resetting the form
+  // and setting the download date to the selected date
   useEffect(() => {
     if (!isModalOpen) {
       setDownloadDate(selectedDate);
@@ -69,6 +81,7 @@ export function DownloadAttendance({ selectedDate }: DownloadAttendanceProps) {
     }
   }, [selectedDate, isModalOpen, resetForm]);
 
+  // This function fetches the attendance data from the server
   const downloadAttendanceReport = async () => {
     try {
       setIsDownloading(true);

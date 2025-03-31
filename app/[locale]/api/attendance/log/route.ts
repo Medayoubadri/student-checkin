@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// Retrieves attendance history for a specific student, ordered by date
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;

@@ -22,14 +22,15 @@ interface ImportLogModalProps {
   importResult: ImportResult | null;
 }
 
+// ImportLogModal component for displaying import results
+// This component is a modal dialog that shows the results of an import operation
 function StatCard({
   icon: Icon,
   label,
   value,
   color,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  icon: any;
+  icon: React.ElementType;
   label: string;
   value: number | string;
   color: string;

@@ -33,6 +33,10 @@ interface ColumnMapping {
   [key: string]: string;
 }
 
+// ImportStudentsModal component for importing student data
+// This component is a modal dialog that allows the user to upload a CSV file
+// and map the columns to the required fields
+// It handles the import process and displays the results
 export function ImportStudentsModal({
   isOpen,
   onClose,
@@ -45,9 +49,12 @@ export function ImportStudentsModal({
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations("ImportStudentsModal");
 
+  // Define the required and optional fields for mapping
   const requiredFields = ["name", "age", "gender"];
+  // Optional fields can be added here
   const optionalFields = ["phoneNumber"];
 
+  // Handle file drop using react-dropzone
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       const selectedFile = acceptedFiles[0];
@@ -72,10 +79,14 @@ export function ImportStudentsModal({
     },
   });
 
+  // This function updates the column mapping state when a user selects a column for a required field
   const handleColumnMap = (field: string, value: string) => {
     setColumnMapping((prev) => ({ ...prev, [field]: value }));
   };
 
+  // This function handles the import process
+  // It sends the file and column mapping to the server for processing
+  // and handles the response
   const handleImport = async () => {
     if (!file) {
       toast({
@@ -89,10 +100,13 @@ export function ImportStudentsModal({
     setIsLoading(true);
     setStep("processing");
 
+    // Prepare the form data for the API request
     const formData = new FormData();
     formData.append("file", file);
     formData.append("columnMapping", JSON.stringify(columnMapping));
 
+    // Send the file and column mapping to the server
+    // and handle the response
     try {
       const response = await fetch("/api/import", {
         method: "POST",
@@ -136,6 +150,8 @@ export function ImportStudentsModal({
     }
   };
 
+  // Reset the import state
+  // This function clears the file, headers, column mapping, and resets the step
   const resetImport = useCallback(() => {
     setFile(null);
     setHeaders([]);
@@ -144,19 +160,24 @@ export function ImportStudentsModal({
     setIsLoading(false);
   }, []);
 
+  // Handle modal close
   const handleClose = () => {
     resetImport();
     onClose();
   };
 
+  // This function checks if all required fields have been mapped
   const isMapComplete = requiredFields.every((field) => columnMapping[field]);
 
+  // This effect runs when the modal opens
   useEffect(() => {
     if (!isOpen) {
       resetImport();
     }
   }, [isOpen, resetImport]);
 
+  // Render the modal dialog
+  // The modal contains different steps for uploading, mapping, and processing the import
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px] md:max-w-[480px]">
@@ -165,6 +186,7 @@ export function ImportStudentsModal({
             {t("title")}
           </DialogTitle>
         </DialogHeader>
+        {/* Step 1: Upload File */}
         {step === "upload" && (
           <div className="flex flex-col items-center gap-4 py-4">
             <div
@@ -214,6 +236,7 @@ export function ImportStudentsModal({
             <p className="text-muted-foreground text-sm">{t("description")}</p>
           </div>
         )}
+        {/* Step 2: Map Columns */}
         {step === "map" && (
           <div className="flex flex-col gap-4 py-4">
             <h3 className="mb-4 w-3/4 font-light test-xs">{t("subtitle")}</h3>
@@ -253,6 +276,7 @@ export function ImportStudentsModal({
             </Button>
           </div>
         )}
+        {/* Step 3: Processing */}
         {step === "processing" && <ProcessingScreen />}
       </DialogContent>
     </Dialog>

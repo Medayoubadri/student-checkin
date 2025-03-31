@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
-// GET request for fetching attendance history for the past 14 days
+// Retrieves attendance statistics for the past 14 days, grouped by date
 export async function GET() {
   const session = await getServerSession(authOptions);
 

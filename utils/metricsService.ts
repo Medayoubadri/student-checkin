@@ -1,7 +1,7 @@
-// utils/metricsService.ts - A utility service for metrics collection and handling
+// utils/metricsService.ts - Service for handling attendance metrics with client-side caching
 
 const METRICS_CACHE_KEY = "metrics";
-const CACHE_TTL = 60 * 120 * 1000; // 2 seconds
+const CACHE_TTL = 60 * 120 * 1000; // 2 hours
 
 interface Metrics {
   totalStudents: number;
@@ -11,6 +11,7 @@ interface Metrics {
 }
 
 export const metricsService = {
+  // Fetches attendance metrics with cache support
   async getMetrics(): Promise<Metrics> {
     const cached = localStorage.getItem(METRICS_CACHE_KEY);
     if (cached) {
@@ -32,6 +33,7 @@ export const metricsService = {
     return data;
   },
 
+  // Clears the metrics cache
   async invalidateCache() {
     localStorage.removeItem(METRICS_CACHE_KEY);
   },
