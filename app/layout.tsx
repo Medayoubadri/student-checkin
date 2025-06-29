@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import type React from "react";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { SessProvider } from "@/providers/session-provider";
+import { SessionProvider } from "@/providers/SessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SessProvider>
+    <SessionProvider>
       <html lang="en">
         <body className={inter.className}>
           <ThemeProvider
@@ -34,6 +34,6 @@ export default function RootLayout({
           </ThemeProvider>
         </body>
       </html>
-    </SessProvider>
+    </SessionProvider>
   );
 }

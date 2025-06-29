@@ -57,31 +57,52 @@ export default function HomePage() {
   }
 
   const handleCheck = async () => {
-    const checkResponse = await fetch(
-      `/api/students?name=${encodeURIComponent(name)}`
-    );
-    const existingStudent = await checkResponse.json();
+    try {
+      const checkResponse = await fetch(
+        `/api/students?name=${encodeURIComponent(name)}`
+      );
+      const existingStudent = await checkResponse.json();
 
-    if (existingStudent) {
-      await markAttendance(existingStudent.id);
-    } else {
-      setShowAdditionalFields(true);
+      if (existingStudent) {
+        await markAttendance(existingStudent.id);
+      } else {
+        setShowAdditionalFields(true);
+      }
+    } catch (error) {
+      console.error("Error checking student:", error);
+      toast({
+        title: "Error",
+        description: "Failed to check student. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const createResponse = await fetch("/api/students", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, age: Number.parseInt(age), gender }),
-    });
-    const newStudent = await createResponse.json();
-    await markAttendance(newStudent.id);
-    setShowAdditionalFields(false);
-    setAge("");
-    setGender("");
+    try {
+      const createResponse = await fetch("/api/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, age: Number.parseInt(age), gender }),
+      });
+      if (!createResponse.ok) {
+        throw new Error("Failed to create student");
+      }
+      const newStudent = await createResponse.json();
+      await markAttendance(newStudent.id);
+      setShowAdditionalFields(false);
+      setAge("");
+      setGender("");
+    } catch (error) {
+      console.error("Error creating student:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create student. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const markAttendance = async (studentId: string) => {
@@ -100,7 +121,7 @@ export default function HomePage() {
         description: result.message,
       });
       setName("");
-      fetchMetrics(); // Refresh metrics after marking attendance
+      fetchMetrics();
     } else {
       toast({
         title: "Error",

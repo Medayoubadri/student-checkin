@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ImportStudentsModal } from "./ImportStudentsModal";
-import { ExportOptionsModal } from "./ExportOptionsMoadal";
+import { ExportOptionsModal } from "./ExportOptionsModal";
 
 export function ActionsButton({
   onImportComplete,

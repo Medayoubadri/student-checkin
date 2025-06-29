@@ -14,7 +14,7 @@ import { Github, Mail } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import Image from "next/image";
 
-export default function LoginCard() {
+export default function SignIn() {
   return (
     <div className="flex flex-col justify-center items-center bg-slate-100 dark:bg-zinc-950 p-4 min-h-screen gray-100">
       <div className="top-4 right-4 fixed">

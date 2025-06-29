@@ -1,10 +1,24 @@
 import { NextResponse } from "next/server";
 import { parse } from "csv-parse/sync";
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
+interface CSVRecord {
+  name: string;
+  age: string;
+  gender: string;
+}
+
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
@@ -17,23 +31,32 @@ export async function POST(req: Request) {
     const records = parse(fileContent, {
       columns: true,
       skip_empty_lines: true,
+    }) as CSVRecord[];
+
+    const importedStudents = await Promise.all(
+      records.map((record: CSVRecord) =>
+        prisma.student.create({
+          data: {
+            name: record.name,
+            age: Number.parseInt(record.age),
+            gender: record.gender,
+            userId: session.user.id,
+          },
+        })
+      )
+    );
+
+    return NextResponse.json({
+      message: "Students imported successfully",
+      count: importedStudents.length,
     });
-
-    for (const record of records) {
-      await prisma.student.create({
-        data: {
-          name: record.name,
-          age: Number.parseInt(record.age),
-          gender: record.gender,
-        },
-      });
-    }
-
-    return NextResponse.json({ message: "Students imported successfully" });
   } catch (error) {
     console.error("Error importing students:", error);
     return NextResponse.json(
-      { error: "Failed to import students" },
+      {
+        error:
+          "Failed to import students. Please check your CSV file and try again.",
+      },
       { status: 500 }
     );
   }

@@ -2,19 +2,29 @@ import { NextResponse } from "next/server";
 import { stringify } from "csv-stringify/sync";
 import * as XLSX from "xlsx";
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const format = searchParams.get("format") || "csv";
 
   try {
     const students = await prisma.student.findMany({
+      where: {
+        userId: session.user.id,
+      },
       orderBy: { name: "asc" },
     });
 
-    // Transform the data
     const transformedStudents = students.map((student, index) => ({
       number: index + 1,
       fullName: student.name,
@@ -35,10 +45,9 @@ export async function GET(request: Request) {
             "attachment; filename=Check-in_Mate_students-list.csv",
         },
       });
-    } else if (format === "xlsx") {
+    } else {
       const worksheet = XLSX.utils.json_to_sheet(transformedStudents);
 
-      // Rename the headers
       XLSX.utils.sheet_add_aoa(
         worksheet,
         [["Number", "Full Name", "Age", "Gender"]],
@@ -60,16 +69,11 @@ export async function GET(request: Request) {
             "attachment; filename=Check-in_Mate_students-list.xlsx",
         },
       });
-    } else {
-      return NextResponse.json(
-        { error: "Invalid format specified" },
-        { status: 400 }
-      );
     }
   } catch (error) {
     console.error("Error exporting students:", error);
     return NextResponse.json(
-      { error: "Failed to export students" },
+      { error: "Failed to export students. Please try again later." },
       { status: 500 }
     );
   }

@@ -1,11 +1,23 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
 export async function GET() {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    const totalStudents = await prisma.student.count();
+    const totalStudents = await prisma.student.count({
+      where: {
+        userId: session.user.id,
+      },
+    });
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -14,10 +26,19 @@ export async function GET() {
         date: {
           gte: today,
         },
+        student: {
+          userId: session.user.id,
+        },
       },
     });
 
-    const totalAttendance = await prisma.attendance.count();
+    const totalAttendance = await prisma.attendance.count({
+      where: {
+        student: {
+          userId: session.user.id,
+        },
+      },
+    });
 
     const averageAttendance =
       totalStudents > 0
