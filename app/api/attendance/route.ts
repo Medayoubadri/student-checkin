@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     if (existingAttendance) {
       return NextResponse.json(
         { message: "Attendance already marked for today" },
-        { status: 200 }
+        { status: 201 }
       );
     }
     const attendance = await prisma.attendance.create({
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { message: "Attendance marked successfully", attendance },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error) {
     console.error("Error marking attendance:", error);

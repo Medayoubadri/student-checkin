@@ -1,7 +1,9 @@
+// app/(dashboard)/layout.tsx
 "use client";
 
 import Header from "@/components/header";
 import { MainNav } from "@/components/main-nav";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default function DashboardLayout({
   children,
@@ -9,14 +11,16 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative flex w-screen h-screen">
-      <header className="top-0 left-0 z-10 absolute w-full">
-        <Header />
-      </header>
-      <main className="flex w-full h-full">
+    <SidebarProvider>
+      <div className="relative flex w-full h-screen">
         <MainNav />
-        <div className="flex-1">{children}</div>
-      </main>
-    </div>
+        <div className="flex flex-col flex-1">
+          <header className="top-0 right-0 left-0 z-10 fixed bg-background">
+            <Header />
+          </header>
+          <main className="flex-1 mt-16 px-6">{children}</main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }

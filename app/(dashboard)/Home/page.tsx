@@ -1,21 +1,49 @@
+// app/(dashboard)/Home/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 
-export default function Dashboard() {
+export default function HomePage() {
   const { status } = useSession();
   const router = useRouter();
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
+  const [metrics, setMetrics] = useState({
+    totalStudents: 0,
+    todayAttendance: 0,
+    averageAttendance: 0,
+    totalAttendance: 0,
+  });
+
+  useEffect(() => {
+    fetchMetrics();
+  }, []);
+
+  const fetchMetrics = async () => {
+    try {
+      const response = await fetch("/api/metrics");
+      const data = await response.json();
+      setMetrics(data);
+    } catch (error) {
+      console.error("Error fetching metrics:", error);
+    }
+  };
 
   if (status === "loading") {
     return (
@@ -72,6 +100,7 @@ export default function Dashboard() {
         description: result.message,
       });
       setName("");
+      fetchMetrics(); // Refresh metrics after marking attendance
     } else {
       toast({
         title: "Error",
@@ -79,11 +108,18 @@ export default function Dashboard() {
         variant: "destructive",
       });
     }
+    if (attendanceResponse.status === 201) {
+      toast({
+        variant: "info",
+        title: "Already Marked",
+        description: result.message,
+      });
+    }
   };
 
   return (
-    <div className="flex justify-center items-center h-full">
-      <Card className="bg-background w-full max-w-md">
+    <div className="flex flex-col justify-center items-center space-y-8 h-full">
+      <Card className="bg-background w-full md:max-w-md">
         <CardHeader>
           <CardTitle className="font-bold text-2xl text-center">
             Student Check-in
@@ -92,7 +128,7 @@ export default function Dashboard() {
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Full Name</Label>
               <Input
                 id="name"
                 className="bg-background dark:bg-zinc-900 dark:border-none"
@@ -121,16 +157,29 @@ export default function Dashboard() {
                     required
                   />
                 </div>
-                <div className="space-y-2">
+                <div>
                   <Label htmlFor="gender">Gender</Label>
-                  <Input
-                    id="gender"
-                    value={gender}
-                    className="bg-background dark:bg-zinc-900 dark:border-none"
-                    onChange={(e) => setGender(e.target.value)}
-                    placeholder="Enter gender"
-                    required
-                  />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        className="bg-background dark:bg-zinc-900 mt-2 border dark:border-none w-full"
+                      >
+                        <span className="flex items-center w-full text-left text-muted-foreground">
+                          {gender === "male" ? "Male" : "Female"}
+                          <ChevronDown className="ml-auto w-4 h-4" />
+                        </span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="flex flex-col gap-3 px-4 py-2 w-[320px] lg:w-[400px]">
+                      <DropdownMenuItem onClick={() => setGender("male")}>
+                        Male
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setGender("female")}>
+                        Female
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
                 <Button type="submit" className="w-full">
                   Submit
@@ -140,6 +189,41 @@ export default function Dashboard() {
           </div>
         </CardContent>
       </Card>
+
+      <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full max-w-4xl">
+        <Card className="bg-background">
+          <CardHeader>
+            <CardTitle>Total Students</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="font-bold text-3xl">{metrics.totalStudents}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-background">
+          <CardHeader>
+            <CardTitle>Today&apos;s Attendance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="font-bold text-3xl">{metrics.todayAttendance}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-background">
+          <CardHeader>
+            <CardTitle>Average Attendance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="font-bold text-3xl">{metrics.averageAttendance}%</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-background">
+          <CardHeader>
+            <CardTitle>Total Attendance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="font-bold text-3xl">{metrics.totalAttendance}</p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

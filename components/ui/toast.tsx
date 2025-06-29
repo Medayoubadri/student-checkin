@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva, type VariantProps } from "class-variance-authority";
-import { X } from "lucide-react";
+import { X, CheckCircle, AlertTriangle, XCircle, InfoIcon } from "lucide-react"; // Import icons
 
 import { cn } from "@/lib/utils";
 
@@ -23,14 +23,16 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
 const toastVariants = cva(
-  "group relative data-[state=closed]:slide-out-to-right-full data-[state=open]:sm:slide-in-from-bottom-full flex justify-between items-center space-x-4 data-[state=open]:slide-in-from-top-full shadow-lg p-6 pr-8 border rounded-md w-full transition-all data-[swipe=move]:transition-none data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[state=closed]:animate-out data-[state=open]:animate-in data-[swipe=end]:animate-out overflow-hidden pointer-events-auto data-[state=closed]:fade-out-80",
+  "group relative data-[state=closed]:slide-out-to-right-full data-[state=open]:sm:slide-in-from-bottom-full flex justify-between items-center space-x-4 data-[state=open]:slide-in-from-top-full shadow-xl p-6 pr-8 border rounded-md w-full transition-all data-[swipe=move]:transition-none data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[state=closed]:animate-out data-[state=open]:animate-in data-[swipe=end]:animate-out overflow-hidden pointer-events-auto data-[state=closed]:fade-out-80",
   {
     variants: {
       variant: {
         default: "border bg-background text-foreground",
         destructive:
           "destructive group border-destructive bg-background text-destructive-foreground",
-        success: "border border-emerald-500 bg-background text-emerald-500",
+        success: "border border-emerald-500 bg-background",
+        info: "border border-sky-500 bg-background",
+        warning: "border border-yellow-500 bg-background",
       },
     },
     defaultVariants: {
@@ -42,14 +44,32 @@ const toastVariants = cva(
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
-    VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => {
+    VariantProps<typeof toastVariants> & { icon?: React.ReactNode } // Add icon prop type
+>(({ className, variant, icon, ...props }, ref) => {
+  const variantIcons = {
+    default: null,
+    destructive: <XCircle className="text-red-500" />,
+    success: <CheckCircle className="text-emerald-500" />,
+    warning: <AlertTriangle className="text-yellow-500" />,
+    info: <InfoIcon className="text-sky-500" />,
+  };
+
   return (
     <ToastPrimitives.Root
       ref={ref}
       className={cn(toastVariants({ variant }), className)}
       {...props}
-    />
+    >
+      <ToastTitle
+        icon={
+          icon ||
+          (variant && variantIcons[variant as keyof typeof variantIcons])
+        }
+        className="!font-normal"
+      >
+        {props.children}
+      </ToastTitle>
+    </ToastPrimitives.Root>
   );
 });
 Toast.displayName = ToastPrimitives.Root.displayName;
@@ -89,13 +109,20 @@ ToastClose.displayName = ToastPrimitives.Close.displayName;
 
 const ToastTitle = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Title>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title> & {
+    icon?: React.ReactNode;
+  }
+>(({ className, icon, ...props }, ref) => (
   <ToastPrimitives.Title
     ref={ref}
     className={cn("text-sm font-semibold", className)}
     {...props}
-  />
+  >
+    <div className="flex items-start gap-2">
+      {icon}
+      {props.children}
+    </div>
+  </ToastPrimitives.Title>
 ));
 ToastTitle.displayName = ToastPrimitives.Title.displayName;
 
