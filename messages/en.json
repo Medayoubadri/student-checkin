@@ -1,0 +1,93 @@
+{
+  "Auth": {
+    "title": "Check-in Mate",
+    "description": "Sign in to manage attendance",
+    "logoAlt": "Check-in Mate Logo",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithGithub": "Continue with GitHub",
+    "footerText": "Checkmate your attendance game!"
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "home": "Home",
+    "students": "Students",
+    "attendance": "Attendance"
+  },
+  "Index": {
+    "title": "Attendance Manager",
+    "studentCheckIn": "Student Check-in",
+    "fullName": "Full Name",
+    "age": "Age",
+    "gender": "Gender",
+    "check": "Check",
+    "submit": "Submit",
+    "selectGender": "Select gender",
+    "male": "Male",
+    "female": "Female"
+  },
+  "RecentActivityLog": {
+    "checkIns": "{day}'s Check-ins",
+    "downloadTooltip": "Download today's attendance"
+  },
+  "MetricsCards": {
+    "totalStudents": "Total Students",
+    "todayAttendance": "Today's Attendance",
+    "averageAttendance": "Average Attendance",
+    "totalAttendance": "Total Attendance"
+  },
+  "AttendanceChart": {
+    "title": "Attendance Over Time"
+  },
+  "UserNav": {
+    "signOut": "Sign Out"
+  },
+  "MainNav": {
+    "Home": "Home",
+    "Students List": "Students List",
+    "title": "Check-in Mate",
+    "signOut": "Sign Out"
+  },
+  "StudentsPage": {
+    "title": "Students List",
+    "SearchPlaceholder": "Search students...",
+    "loading": "Loading..."
+  },
+  "ActionsButton": {
+    "actions": "Actions",
+    "importStudents": "Import Students",
+    "exportStudents": "Export Students"
+  },
+  "CalendarButton": {
+    "Pickadate": "Pick a date"
+  },
+  "ExportOptionsModal": {
+    "title": "Export Options",
+    "export": "Export"
+  },
+  "ImportStudentsModal": {
+    "title": "Import Students",
+    "import": "Import",
+    "description": "Please upload a CSV file with the following columns: Full Name, Age, Gender and Phone",
+    "toastitle-warning": "No file selected",
+    "toastdescription": "Please select a CSV file to import.",
+    "toastitle-success": "Students imported",
+    "toastdescription-success": "Students have been imported successfully.",
+    "toastitle-failed": "Error importing students",
+    "toastdescription-failed": "An error occurred while importing students."
+  },
+  "ImportModal": {
+    "chooseFile": "Choose File",
+    "noFileChosen": "No file chosen"
+  },
+  "SelectedDateDisplay": {
+    "studentsPresentOn": "Students present on"
+  },
+  "StudentsTable": {
+    "No": "No.",
+    "FullName": "Full Name",
+    "Age": "Age",
+    "Gender": "Gender",
+    "Phone": "Phone",
+    "itemPerPage": " per page"
+  }
+}

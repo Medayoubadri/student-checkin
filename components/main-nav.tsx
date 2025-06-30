@@ -15,11 +15,13 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
+import { useLocale, useTranslations } from "next-intl";
 
 export function MainNav() {
   const pathname = usePathname();
-
+  const t = useTranslations("MainNav");
   const router = useRouter();
+  const locale = useLocale();
 
   const handleSignOut = async () => {
     await signOut();
@@ -27,13 +29,13 @@ export function MainNav() {
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Home", href: "/Home" },
-    { icon: Users, label: "Students List", href: "/students" },
+    { icon: LayoutDashboard, label: t("Home"), href: `/${locale}/Home` },
+    { icon: Users, label: t("Students List"), href: `/${locale}/students` },
   ];
   return (
     <Sidebar className="z-50 md:flex hidden w-64" collapsible="offcanvas">
       <SidebarHeader className="items-center px-4 py-4">
-        <h2 className="font-semibold text-2xl">Check-In Mate</h2>
+        <h2 className="font-semibold text-2xl">{t("title")}</h2>
       </SidebarHeader>
       <SidebarContent className="p-4">
         <SidebarMenu>
@@ -44,13 +46,13 @@ export function MainNav() {
                 isActive={pathname === item.href}
                 className={
                   pathname === item.href
-                    ? "!bg-slate-200 dark:!bg-slate-900 !text-primary !font-extrabold"
+                    ? "!bg-slate-200 dark:!bg-emerald-950 !text-primary !font-extrabold"
                     : ""
                 }
               >
                 <Link
                   href={item.href}
-                  className="flex items-center hover:dark:bg-slate-900/35 hover:bg-slate-200/35 mb-2 px-4 py-6 rounded-md"
+                  className="flex items-center hover:dark:bg-emerald-900/15 hover:bg-slate-200/35 mb-2 px-4 py-6 rounded-md"
                 >
                   <item.icon className="mr-2 w-8 h-8" />
                   {item.label}
@@ -62,12 +64,12 @@ export function MainNav() {
       </SidebarContent>
       <SidebarFooter className="p-4">
         <Button
-          variant="destructive"
-          className="justify-start w-full"
+          variant="outline"
+          className="justify-start hover:border-destructive hover:bg-destructive p-6 w-full"
           onClick={handleSignOut}
         >
           <LogOut className="mr-2 w-4 h-4" />
-          Logout
+          {t("signOut")}
         </Button>
       </SidebarFooter>
     </Sidebar>

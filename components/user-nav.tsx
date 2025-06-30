@@ -10,10 +10,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export function UserNav() {
   const { data: session } = useSession();
   const router = useRouter();
+  const t = useTranslations("UserNav");
 
   const handleSignOut = async () => {
     await signOut();
@@ -44,7 +46,9 @@ export function UserNav() {
             </p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleSignOut}>Log out</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSignOut}>
+          {t("signOut")}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

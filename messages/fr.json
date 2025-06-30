@@ -1,0 +1,93 @@
+{
+  "Auth": {
+    "title": "Check-in Mate",
+    "description": "Connectez-vous pour gérer les présences",
+    "logoAlt": "Logo Check-in Mate",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithGithub": "Continuer avec GitHub",
+    "footerText": "Faites mat à votre gestion des présences!"
+  },
+  "Dashboard": {
+    "title": "Tableau de bord",
+    "home": "Accueil",
+    "students": "Étudiants",
+    "attendance": "Présence"
+  },
+  "Index": {
+    "title": "Présence des étudiants",
+    "studentCheckIn": "Enregistrement des étudiants",
+    "fullName": "Nom complet",
+    "age": "Âge",
+    "gender": "Sexe",
+    "check": "Vérifier",
+    "submit": "Soumettre",
+    "selectGender": "Sélectionner le Sexe",
+    "male": "Masculin",
+    "female": "Féminin"
+  },
+  "RecentActivityLog": {
+    "checkIns": "Enregistrements du {day}",
+    "downloadTooltip": "Télécharger la présence d'aujourd'hui"
+  },
+  "MetricsCards": {
+    "totalStudents": "Total des étudiants",
+    "todayAttendance": "Présence aujourd'hui",
+    "averageAttendance": "La moyenne de présence",
+    "totalAttendance": "Présence totale"
+  },
+  "AttendanceChart": {
+    "title": "Présence au fil du temps"
+  },
+  "UserNav": {
+    "signOut": "Déconnexion"
+  },
+  "MainNav": {
+    "Home": "Accueil",
+    "Students List": "Liste des étudiants",
+    "title": "Check-in Mate",
+    "signOut": "Déconnexion"
+  },
+  "StudentsPage": {
+    "title": "Liste des étudiants",
+    "SearchPlaceholder": "Rechercher...",
+    "loading": "Chargement..."
+  },
+  "ActionsButton": {
+    "actions": "Actions",
+    "importStudents": "Importer une liste",
+    "exportStudents": "Exporter la liste"
+  },
+  "CalendarButton": {
+    "Pickadate": "Choisir une date"
+  },
+  "ExportOptionsModal": {
+    "title": "Options d'exportation",
+    "export": "Exporter"
+  },
+  "ImportStudentsModal": {
+    "title": "Importer une liste",
+    "import": "Importer",
+    "description": "Veuillez sélectionner un fichier CSV à importer. Le fichier doit contenir les colonnes suivantes: Nom complet, Âge, Sexe et Numéro de tеléphone.",
+    "toastitle-warning": "Aucun fichier sélectionné",
+    "toastdescription": "Veuillez sélectionner un fichier CSV à importer.",
+    "toastitle-success": "List d'Étudiants importés",
+    "toastdescription-success": "La liste des étudiants ont été importés avec succès.",
+    "toastitle-failed": "Erreur lors de l'importation de la liste",
+    "toastdescription-failed": "Une erreur est survenue lors de l'importation de la liste des étudiants. Veuillez réessayer."
+  },
+  "ImportModal": {
+    "chooseFile": "Choisir un fichier",
+    "noFileChosen": "Aucun fichier sélectionné"
+  },
+  "SelectedDateDisplay": {
+    "studentsPresentOn": "Étudiants présents le"
+  },
+  "StudentsTable": {
+    "No": "nbre",
+    "FullName": "Nom complet",
+    "Age": "Âge",
+    "Gender": "Sexe",
+    "Phone": "Téléphone",
+    "itemPerPage": " par page"
+  }
+}
