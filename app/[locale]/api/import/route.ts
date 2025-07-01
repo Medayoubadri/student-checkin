@@ -10,6 +10,7 @@ interface CSVRecord {
   name: string;
   age: string;
   gender: string;
+  phoneNumber?: string;
 }
 
 export async function POST(req: Request) {
@@ -40,6 +41,7 @@ export async function POST(req: Request) {
             name: record.name,
             age: Number.parseInt(record.age),
             gender: record.gender,
+            phoneNumber: record.phoneNumber,
             userId: session.user.id,
           },
         })

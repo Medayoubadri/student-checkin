@@ -13,8 +13,9 @@
     "students": "Students",
     "attendance": "Attendance"
   },
-  "Index": {
+  "HomePage": {
     "title": "Attendance Manager",
+    "loading": "Loading...",
     "studentCheckIn": "Student Check-in",
     "fullName": "Full Name",
     "age": "Age",
@@ -50,7 +51,19 @@
   "StudentsPage": {
     "title": "Students List",
     "SearchPlaceholder": "Search students...",
-    "loading": "Loading..."
+    "students": "Selected Students",
+    "student": "Student",
+    "loading": "Loading...",
+    "toastitle-update-success": "Student record updated",
+    "toastdescription-update-success": "Student record has been updated successfully.",
+    "toastitle-update-error": "Error updating student",
+    "toastdescription-update-error": "An error occurred while updating the student record.",
+    "toastitle-delete-success": "{count} Student record(s) deleted",
+    "toastdescription-delete-success": "The student record has been deleted successfully.",
+    "toastitle-delete-error": "Error deleting student record",
+    "toastdescription-delete-error": "An error occurred while deleting the student's record.",
+    "duplicateName-error": "Duplicate Name",
+    "duplicatename-error-description": "A student with the same name already exists.\n Please enter a different name."
   },
   "ActionsButton": {
     "actions": "Actions",
@@ -88,6 +101,39 @@
     "Age": "Age",
     "Gender": "Gender",
     "Phone": "Phone",
-    "itemPerPage": " per page"
+    "PhoneNumber": "Phone Number",
+    "Edit": "Edit",
+    "deleteBulk": "Delete selected students",
+    "itemPerPage": " per page",
+    "student": "student",
+    "students": "students",
+    "noStudentsFound": "No students found",
+    "forSearch": " matching the search"
+  },
+  "NewStudentModal": {
+    "title": "Add Student",
+    "FullName": "Full Name",
+    "Age": "Age",
+    "Gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "Phone": "Phone",
+    "addStudent": "Add Student"
+  },
+  "EditStudentModal": {
+    "title": "Edit Student",
+    "FullName": "Full Name",
+    "Age": "Age",
+    "Gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "phoneNumber": "Phone",
+    "save": "Save"
+  },
+  "DeleteConfirmationDialog": {
+    "deleteConfirmationTitle": "Delete Students",
+    "deleteConfirmationDescription": "Are you sure you want to delete {itemName}?",
+    "cancel": "Cancel",
+    "delete": "Delete"
   }
 }

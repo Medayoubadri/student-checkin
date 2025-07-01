@@ -25,7 +25,7 @@ interface AttendanceData {
 export default function HomePage() {
   const { status } = useSession();
   const router = useRouter();
-  const t = useTranslations("Index");
+  const t = useTranslations("HomePage");
   const [metrics, setMetrics] = useState<Metrics>({
     totalStudents: 0,
     todayAttendance: 0,
@@ -66,7 +66,9 @@ export default function HomePage() {
 
   if (status === "loading") {
     return (
-      <div className="flex justify-center items-center h-full">Loading...</div>
+      <div className="flex justify-center items-center w-full h-full">
+        {t("loading")}
+      </div>
     );
   }
 
@@ -76,27 +78,25 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex flex-col gap-4 md:mt-0 md:p-4 w-full h-full">
-      <h1 className="w-full font-bold text-2xl md:text-4xl">{t("title")}</h1>
-      <div className="flex lg:flex-row flex-col gap-4 w-full">
-        <StudentCheckIn
-          onCheckIn={() => {
-            fetchMetrics();
-            fetchAttendanceData();
-          }}
-          refreshRecentActivity={refreshRecentActivity}
-        />
-        <RecentActivityLog refreshTrigger={refreshTrigger} />
-      </div>
-      <MetricsCards metrics={metrics} />
-      <div className="lg:block flex-1 hidden w-full">
-        <AttendanceChart data={attendanceData} />
-        <AttendanceChart data={attendanceData} />
-        <AttendanceChart data={attendanceData} />
-        <AttendanceChart data={attendanceData} />
-        <AttendanceChart data={attendanceData} />
-        <AttendanceChart data={attendanceData} />
-        <AttendanceChart data={attendanceData} />
+    <div className="flex flex-col items-center gap-4 md:mt-0 p-4 md:p-6 w-full h-full overflow-y-auto">
+      <h1 className="w-full lg:max-w-7xl font-bold text-2xl md:text-4xl">
+        {t("title")}
+      </h1>
+      <div className="flex flex-col items-center gap-4 w-full lg:max-w-7xl">
+        <div className="flex lg:flex-row flex-col gap-4 w-full">
+          <StudentCheckIn
+            onCheckIn={() => {
+              fetchMetrics();
+              fetchAttendanceData();
+            }}
+            refreshRecentActivity={refreshRecentActivity}
+          />
+          <RecentActivityLog refreshTrigger={refreshTrigger} />
+        </div>
+        <MetricsCards metrics={metrics} />
+        <div className="lg:block flex-1 hidden w-full">
+          <AttendanceChart data={attendanceData} />
+        </div>
       </div>
     </div>
   );

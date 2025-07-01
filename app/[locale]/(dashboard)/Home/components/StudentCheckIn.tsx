@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { NewStudentModal } from "@/app/[locale]/(dashboard)/Home/components/AddStudentModal";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useTranslations } from "next-intl";
@@ -24,10 +24,11 @@ export function StudentCheckIn({
   onCheckIn,
   refreshRecentActivity,
 }: StudentCheckInProps) {
-  const t = useTranslations("Index");
+  const t = useTranslations("HomePage");
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -61,7 +62,8 @@ export function StudentCheckIn({
   const handleSubmit = async (
     submittedName: string,
     submittedAge: string,
-    submittedGender: string
+    submittedGender: string,
+    submittedPhoneNumber: string
   ) => {
     try {
       const createResponse = await fetch("/api/students", {
@@ -71,6 +73,7 @@ export function StudentCheckIn({
           name: submittedName,
           age: Number.parseInt(submittedAge),
           gender: submittedGender,
+          phoneNumber: submittedPhoneNumber,
         }),
       });
       if (!createResponse.ok) {
@@ -82,6 +85,8 @@ export function StudentCheckIn({
       setIsModalOpen(false);
       setAge("");
       setGender("");
+      setPhoneNumber("");
+      refreshRecentActivity();
     } catch (error) {
       console.error("Error creating student:", error);
       toast({
@@ -126,6 +131,10 @@ export function StudentCheckIn({
     }
   };
 
+  const handleClearName = () => {
+    setName("");
+  };
+
   return (
     <Card className="bg-background w-full">
       <CardHeader>
@@ -137,22 +146,34 @@ export function StudentCheckIn({
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">{t("fullName")}</Label>
-            <Input
-              id="name"
-              value={name}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleCheck();
-                }
-              }}
-              onChange={(e) => setName(e.target.value)}
-              className="bg-background dark:bg-zinc-900 dark:border-none"
-              placeholder={t("fullName")}
-              required
-            />
+            <div className="relative">
+              <Input
+                id="name"
+                value={name}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleCheck();
+                  }
+                }}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-background dark:bg-zinc-900 pr-10 dark:border-none"
+                placeholder={t("fullName")}
+                required
+              />
+              {name && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="top-0 right-0 absolute h-full"
+                  onClick={handleClearName}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
           </div>
           {!showAdditionalFields && (
-            <Button onClick={handleCheck} className="w-full">
+            <Button onClick={handleCheck} className="w-full" disabled={!name}>
               {t("check")}
             </Button>
           )}
@@ -160,7 +181,7 @@ export function StudentCheckIn({
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                handleSubmit(name, age, gender);
+                handleSubmit(name, age, gender, phoneNumber);
               }}
               className="space-y-4"
             >
@@ -202,7 +223,23 @@ export function StudentCheckIn({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              <Button type="submit" className="w-full">
+              <div className="space-y-2"></div>
+              <Label htmlFor="phoneNumber">
+                {t("phoneNumber")}
+                <Input
+                  id="phoneNumber"
+                  type="tel"
+                  className="bg-background dark:bg-zinc-900 dark:border-none"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder={t("phoneNumber")}
+                />
+              </Label>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!name || !age || !gender}
+              >
                 {t("submit")}
               </Button>
             </form>

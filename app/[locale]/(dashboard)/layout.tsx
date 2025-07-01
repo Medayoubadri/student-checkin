@@ -15,11 +15,11 @@ export default function DashboardLayout({
     <SidebarProvider>
       <div className="relative flex w-full h-screen">
         <MainNav />
-        <header className="top-0 right-0 left-0 z-10 fixed bg-background">
+        <header className="top-0 right-0 left-0 z-10 fixed">
           <Header />
         </header>
-        <div className="flex justify-center mt-16 w-full overflow-y-auto">
-          <main className="flex-1 bg-slate-100 dark:bg-background p-4 w-full lg:max-w-7xl">
+        <div className="flex-1 justify-center items-center md:shadow-md md:mx-6 md:my-4 mt-14 md:mt-16 md:border md:rounded-xl w-full overflow-hidden">
+          <main className="flex bg-slate-50 dark:bg-background w-full h-full">
             {children}
           </main>
         </div>

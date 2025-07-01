@@ -33,7 +33,10 @@ export function MainNav() {
     { icon: Users, label: t("Students List"), href: `/${locale}/students` },
   ];
   return (
-    <Sidebar className="z-50 md:flex hidden w-64" collapsible="offcanvas">
+    <Sidebar
+      className="z-50 md:flex hidden border-none w-64"
+      collapsible="offcanvas"
+    >
       <SidebarHeader className="items-center px-4 py-4">
         <h2 className="font-semibold text-2xl">{t("title")}</h2>
       </SidebarHeader>

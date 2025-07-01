@@ -27,6 +27,7 @@ export function DownloadAttendance({ className }: DownloadAttendanceProps) {
         [`Date: ${today}`], // Date
         [], // Empty row for spacing
         ["Full Name", "Age", "Gender", "Attendance"], // Headers
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ...data.map((record: any) => [
           record.fullName,
           record.age,

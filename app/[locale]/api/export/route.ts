@@ -30,12 +30,13 @@ export async function GET(request: Request) {
       fullName: student.name,
       age: student.age,
       gender: student.gender,
+      phoneNumber: student.phoneNumber,
     }));
 
     if (format === "csv") {
       const csvData = stringify(transformedStudents, {
         header: true,
-        columns: ["number", "fullName", "age", "gender"],
+        columns: ["number", "fullName", "age", "gender", "phoneNumber"],
       });
 
       return new NextResponse(csvData, {
@@ -50,7 +51,7 @@ export async function GET(request: Request) {
 
       XLSX.utils.sheet_add_aoa(
         worksheet,
-        [["Number", "Full Name", "Age", "Gender"]],
+        [["Number", "Full Name", "Age", "Gender", "Phone Number"]],
         { origin: "A1" }
       );
 

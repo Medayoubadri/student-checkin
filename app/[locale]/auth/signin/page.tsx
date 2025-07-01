@@ -26,11 +26,11 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center bg-slate-100 dark:bg-zinc-950 p-4 min-h-screen gray-100">
+    <div className="flex flex-col justify-center items-center md:bg-slate-100 dark:bg-zinc-950 p-4 min-h-screen gray-100">
       <div className="top-4 right-4 fixed">
         <ThemeToggle />
       </div>
-      <Card className="dark:bg-zinc-900 shadow-2xl border-none w-full max-w-md">
+      <Card className="dark:bg-zinc-900 shadow-none md:shadow-2xl py-5 border-none w-full md:max-w-2xl">
         <CardHeader>
           <CardTitle>
             <div className="flex justify-center mb-4">
@@ -49,10 +49,10 @@ export default function SignIn() {
             {t("description")}
           </CardDescription>
         </CardHeader>
-        <CardContent className="gap-4 grid">
+        <CardContent className="flex flex-col items-center gap-4">
           <Button
             variant="outline"
-            className="py-6 w-full text-lg transition-all hover:scale-105"
+            className="py-6 w-full md:max-w-md text-lg transition-all hover:scale-105"
             onClick={() => handleSignIn("google")}
           >
             <Mail className="mr-2 w-5 h-5" />
@@ -60,7 +60,7 @@ export default function SignIn() {
           </Button>
           <Button
             variant="outline"
-            className="py-6 w-full text-lg transition-all hover:scale-105"
+            className="py-6 w-full md:max-w-md text-lg transition-all hover:scale-105"
             onClick={() => handleSignIn("github")}
           >
             <Github className="mr-2 w-5 h-5" />

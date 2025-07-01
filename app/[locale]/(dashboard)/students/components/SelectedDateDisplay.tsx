@@ -12,8 +12,9 @@ export function SelectedDateDisplay({
   selectedDate,
   onClear,
 }: SelectedDateDisplayProps) {
-  if (!selectedDate) return null;
   const t = useTranslations("SelectedDateDisplay");
+
+  if (!selectedDate) return null;
   const formattedDate = selectedDate.toISOString().split("T")[0];
 
   return (

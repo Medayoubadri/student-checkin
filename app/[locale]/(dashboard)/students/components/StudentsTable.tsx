@@ -15,19 +15,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  Edit,
+  Trash2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 interface Student {
   id: string;
   name: string;
   age: number;
   gender: string;
+  phoneNumber: string;
   createdAt: string;
 }
 
@@ -35,18 +41,27 @@ interface StudentsTableProps {
   students: Student[];
   searchTerm: string;
   selectedDate: Date | null;
+  onEdit: (student: Student) => void;
+  onDelete: (studentId: string) => void;
+  onBulkDelete: (studentIds: string[]) => void;
 }
 
 export function StudentsTable({
   students = [],
   searchTerm,
   selectedDate,
+  onEdit,
+  onDelete,
+  onBulkDelete,
 }: StudentsTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const t = useTranslations("StudentsTable");
   const [studentsPerPage, setStudentsPerPage] = useState(10);
   const [sortColumn, setSortColumn] = useState<keyof Student>("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
 
   const handleSort = (column: keyof Student) => {
     if (column === sortColumn) {
@@ -82,12 +97,55 @@ export function StudentsTable({
     return new Date(createdAt) > oneMonthAgo;
   };
 
+  const handleSelectStudent = (studentId: string) => {
+    setSelectedStudents((prev) =>
+      prev.includes(studentId)
+        ? prev.filter((id) => id !== studentId)
+        : [...prev, studentId]
+    );
+  };
+
+  const handleSelectAllStudents = () => {
+    setSelectedStudents(
+      selectedStudents.length === currentStudents.length
+        ? []
+        : currentStudents.map((student) => student.id)
+    );
+  };
+
+  const handleDeleteClick = (studentId: string) => {
+    setStudentToDelete(studentId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (studentToDelete) {
+      onDelete(studentToDelete);
+    }
+    setIsDeleteDialogOpen(false);
+    setStudentToDelete(null);
+  };
+
+  const handleBulkDelete = () => {
+    onBulkDelete(selectedStudents);
+    setSelectedStudents([]);
+  };
+
   return (
     <>
-      <div className="border rounded-md w-full overflow-x-auto">
+      <div className="relative border rounded-md w-full overflow-x-auto">
         <Table>
           <TableHeader className="bg-primary/20">
             <TableRow>
+              <TableHead className="w-[50px]">
+                <Checkbox
+                  checked={
+                    selectedStudents.length === currentStudents.length &&
+                    currentStudents.length > 0
+                  }
+                  onCheckedChange={handleSelectAllStudents}
+                />
+              </TableHead>
               <TableHead className="w-[50px]">{t("No")}</TableHead>
               <TableHead
                 onClick={() => handleSort("name")}
@@ -113,13 +171,23 @@ export function StudentsTable({
                 {sortColumn === "gender" &&
                   (sortDirection === "asc" ? " ↑" : " ↓")}
               </TableHead>
+              <TableHead className="hidden w-[250px] md:table-cell">
+                {t("PhoneNumber")}
+              </TableHead>
+              <TableHead className="w-[100px]">{t("Edit")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentStudents.map((student, index) => (
               <TableRow key={student.id}>
+                <TableCell>
+                  <Checkbox
+                    checked={selectedStudents.includes(student.id)}
+                    onCheckedChange={() => handleSelectStudent(student.id)}
+                  />
+                </TableCell>
                 <TableCell>{indexOfFirstStudent + index + 1}</TableCell>
-                <TableCell className="flex items-center">
+                <TableCell className="flex items-center w-[150px] md:w-auto truncate">
                   {student.name}
                   {isNewStudent(student.createdAt) && (
                     <div className="bg-green-500 ml-2 rounded-full w-2 h-2" />
@@ -131,18 +199,54 @@ export function StudentsTable({
                 <TableCell className="whitespace-nowrap">
                   {student.gender}
                 </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {student.phoneNumber}
+                </TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onEdit(student)}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteClick(student.id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        <AnimatePresence>
+          {selectedStudents.length > 0 && (
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 100, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="right-1/3 bottom-4 absolute bg-destructive shadow-lg px-4 py-2 rounded-md text-destructive-foreground"
+            >
+              <Button onClick={handleBulkDelete} variant="destructive">
+                {t("deleteBulk", { count: selectedStudents.length })}
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       {currentStudents.length === 0 && (
         <div className="py-4 text-center">
           {selectedDate
-            ? `No students found ${
-                searchTerm ? "matching the search" : ""
+            ? `${t("noStudentsFound")} ${
+                searchTerm ? t("forSearch") : ""
               } for the selected date.`
-            : `No students found${searchTerm ? " matching the search." : "."}`}
+            : `${t("noStudentsFound")}${searchTerm ? t("forSearch") : "."}`}
         </div>
       )}
       <div className="flex justify-between items-center md:items-center gap-4 py-4">
@@ -202,6 +306,13 @@ export function StudentsTable({
           </Button>
         </div>
       </div>
+
+      <DeleteConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleConfirmDelete}
+        itemName={t("student")}
+      />
     </>
   );
 }

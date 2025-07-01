@@ -13,9 +13,10 @@
     "students": "Étudiants",
     "attendance": "Présence"
   },
-  "Index": {
+  "HomePage": {
     "title": "Présence des étudiants",
     "studentCheckIn": "Enregistrement des étudiants",
+    "loading": "Chargement...",
     "fullName": "Nom complet",
     "age": "Âge",
     "gender": "Sexe",
@@ -50,7 +51,19 @@
   "StudentsPage": {
     "title": "Liste des étudiants",
     "SearchPlaceholder": "Rechercher...",
-    "loading": "Chargement..."
+    "loading": "Chargement...",
+    "students": "les étudiants sélectionnés",
+    "student": "l'étudiant",
+    "toastitle-update-success": "Dossier mis à jour",
+    "toastdescription-update-success": "Le dossier de  l'étudiant a été mis à jour avec succès.",
+    "toastitle-update-error": "Erreur lors de la mise à jour",
+    "toastdescription-update-error": "Une erreur est survenue lors de la mise à jour du dossier de l'étudiant.",
+    "toastitle-delete-success": "{count} Dossier supprimé",
+    "toastdescription-delete-success": "Le dossier de l'étudiant a été supprimé avec succès.",
+    "toastitle-delete-error": "Erreur lors de la suppression",
+    "toastdescription-delete-error": "Une erreur est survenue lors de la suppression du dossier de l'étudiant.",
+    "duplicateName-error": "Nom en double",
+    "duplicatename-error-description": "Un étudiant avec le même nom existe déjà.\nVeuillez choisir un autre nom."
   },
   "ActionsButton": {
     "actions": "Actions",
@@ -87,7 +100,39 @@
     "FullName": "Nom complet",
     "Age": "Âge",
     "Gender": "Sexe",
+    "PhoneNumber": "Téléphone",
+    "Edit": "Modifier",
+    "deleteBulk": "Supprimer la sélection",
+    "itemPerPage": " par page",
+    "student": "étudiant",
+    "students": "étudiants",
+    "noStudentsFound": "Aucun étudiant trouvé",
+    "forSearch": " pour la recherche"
+  },
+  "NewStudentModal": {
+    "title": "Ajouter un étudiant",
+    "FullName": "Nom complet",
+    "Age": "Âge",
+    "Gender": "Sexe",
+    "male": "Masculin",
+    "female": "Féminin",
     "Phone": "Téléphone",
-    "itemPerPage": " par page"
+    "addStudent": "Ajouter"
+  },
+  "EditStudentModal": {
+    "title": "Modifier l'étudiant",
+    "FullName": "Nom complet",
+    "Age": "Âge",
+    "Gender": "Sexe",
+    "male": "Masculin",
+    "female": "Féminin",
+    "phoneNumber": "Téléphone",
+    "save": "Enregistrer"
+  },
+  "DeleteConfirmationDialog": {
+    "deleteConfirmationTitle": "Supprimer la selection",
+    "deleteConfirmationDescription": "Voulez-vous vraiment supprimer {itemName}?",
+    "cancel": "Annuler",
+    "delete": "Supprimer"
   }
 }
