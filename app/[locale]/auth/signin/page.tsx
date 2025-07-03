@@ -14,19 +14,15 @@ import { Github, Mail } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 export default function SignIn() {
   const t = useTranslations("Auth");
-  const searchParams = useSearchParams();
   const params = useParams();
   const locale = params.locale as string;
-  const error = searchParams.get("error");
 
-  const handleSignIn = async (provider: string) => {
-    await signIn(provider, {
-      callbackUrl: `${locale}/Home`,
-    });
+  const handleSignIn = (provider: string) => {
+    signIn(provider, { callbackUrl: `/${locale}/Home` });
   };
 
   return (
@@ -53,13 +49,6 @@ export default function SignIn() {
             {t("description")}
           </CardDescription>
         </CardHeader>
-        {error && (
-          <div className="bg-red-50 mx-6 mb-4 p-4 rounded-md text-red-600 text-sm">
-            {error === "Callback"
-              ? "Authentication error. Please try again."
-              : "An error occurred during sign in."}
-          </div>
-        )}
         <CardContent className="flex flex-col items-center gap-4">
           <Button
             variant="outline"

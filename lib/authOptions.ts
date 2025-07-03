@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
       // Check if the URL is relative (starts with a slash)
       if (url.startsWith("/")) {
         // Extract locale from the URL or default to 'en'
-        const locale = url.split("/")[1];
+        const locale = url.split("/")[1] || "fr";
         // Ensure the URL starts with the locale and redirects to the Home page
         return `${baseUrl}/${locale}/Home`;
       }
