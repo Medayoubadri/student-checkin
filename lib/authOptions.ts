@@ -28,6 +28,15 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    redirect: async ({ url, baseUrl }) => {
+      // Check if the URL is relative (starts with a slash)
+      const locale = url.split("/")[1];
+      if (url.startsWith("/")) {
+        // Ensure the URL starts with the locale and redirects to the Home page
+        return `${baseUrl}/${locale}/Home`;
+      }
+      return `${baseUrl}/${locale}/Home`;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
