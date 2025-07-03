@@ -11,6 +11,5 @@ export const config = {
     "/Home/:path*",
     "/students/:path*",
     "/(fr|en)/:path*",
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };
