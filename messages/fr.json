@@ -58,7 +58,7 @@
     "toastdescription-update-success": "Le dossier de  l'étudiant a été mis à jour avec succès.",
     "toastitle-update-error": "Erreur lors de la mise à jour",
     "toastdescription-update-error": "Une erreur est survenue lors de la mise à jour du dossier de l'étudiant.",
-    "toastitle-delete-success": "{count} Dossier supprimé",
+    "toastitle-delete-success": "Dossier supprimé",
     "toastdescription-delete-success": "Le dossier de l'étudiant a été supprimé avec succès.",
     "toastitle-delete-error": "Erreur lors de la suppression",
     "toastdescription-delete-error": "Une erreur est survenue lors de la suppression du dossier de l'étudiant.",
