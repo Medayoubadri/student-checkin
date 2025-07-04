@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface Student {
   id: string;
@@ -63,7 +62,6 @@ export function StudentsTable({
   const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSort = (column: keyof Student) => {
     if (column === sortColumn) {
