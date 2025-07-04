@@ -34,7 +34,11 @@ export default function AttendanceLog({
   onAttendanceRemoved,
 }: AttendanceLogProps) {
   // Initialize currentDate with time set to midnight
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  });
   console.log("Current Date:", currentDate);
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
   const [isLoading] = useState(false);
@@ -145,10 +149,10 @@ export default function AttendanceLog({
                   selected={currentDate}
                   onSelect={(date) => {
                     if (date) {
-                      const normalized = new Date(date);
-                      normalized.setHours(0, 0, 0, 0); // Ensure midnight
-                      setCurrentDate(normalized);
-                      console.log("Setting Calendar date:", normalized);
+                      // const normalized = new Date(date);
+                      // normalized.setHours(0, 0, 0, 0); // Ensure midnight
+                      setCurrentDate(date);
+                      console.log("Setting date from calendar:", date);
                       const trigger = document.querySelector(
                         '[data-state="open"]'
                       );
