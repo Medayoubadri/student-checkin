@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
+// import { redis } from "@/lib/cache";
 
 const prisma = new PrismaClient();
 
@@ -17,6 +18,13 @@ export async function GET(request: Request) {
 
   try {
     if (name) {
+      // const cacheKey = `students:${session.user.id}:${name}`;
+      // const cachedStudents = await redis.get(cacheKey);
+
+      // if (cachedStudents) {
+      //   return NextResponse.json(cachedStudents);
+      // }
+
       const students = await prisma.student.findMany({
         where: {
           name: {
@@ -27,6 +35,9 @@ export async function GET(request: Request) {
         },
         take: 5, // Limit results for better performance
       });
+
+      // Cache the results for 60 minutes
+      // await redis.set(cacheKey, JSON.stringify(students), { ex: 3600 });
       return NextResponse.json(students);
     }
   } catch (error) {

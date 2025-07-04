@@ -28,6 +28,7 @@ interface NewStudentModalProps {
     phoneNumber: string
   ) => void;
   name: string;
+  isLoading: boolean;
 }
 
 export function NewStudentModal({
@@ -35,6 +36,7 @@ export function NewStudentModal({
   onClose,
   onSubmit,
   name,
+  isLoading,
 }: NewStudentModalProps) {
   const t = useTranslations("NewStudentModal");
   const [age, setAge] = useState("");
@@ -93,8 +95,8 @@ export function NewStudentModal({
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="male">{t("male")}</SelectItem>
-                  <SelectItem value="female">{t("female")}</SelectItem>
+                  <SelectItem value="Male">{t("male")}</SelectItem>
+                  <SelectItem value="Female">{t("female")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -112,8 +114,11 @@ export function NewStudentModal({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={!name || !age || !gender}>
-              {t("addStudent")}
+            <Button
+              type="submit"
+              disabled={!name || !age || !gender || isLoading}
+            >
+              {isLoading ? t("addingStudent") : t("addStudent")}
             </Button>
           </DialogFooter>
         </form>

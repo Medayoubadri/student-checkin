@@ -34,7 +34,7 @@ export function MainNav() {
   ];
   return (
     <Sidebar
-      className="z-50 md:flex hidden border-none w-64"
+      className="hidden z-50 md:flex border-none w-64"
       collapsible="offcanvas"
     >
       <SidebarHeader className="items-center px-4 py-4">
@@ -57,13 +57,13 @@ export function MainNav() {
                 isActive={pathname === item.href}
                 className={
                   pathname === item.href
-                    ? "!bg-background shadow-md dark:!bg-emerald-950 !text-primary !font-extrabold "
+                    ? "!bg-slate-100 md:!bg-background shadow-md dark:!bg-emerald-950 !text-primary !font-extrabold "
                     : ""
                 }
               >
                 <Link
                   href={item.href}
-                  className="flex items-center hover:dark:bg-emerald-900/15 hover:bg-white active:!bg-white mb-2 px-4 py-6 rounded-md"
+                  className="flex items-center hover:dark:bg-emerald-900/30 hover:bg-white active:!bg-white active:dark:!bg-emerald-900 mb-2 px-4 py-6 rounded-md"
                 >
                   <item.icon className="mr-2 !w-6 !h-6" />
                   {item.label}
@@ -76,7 +76,7 @@ export function MainNav() {
       <SidebarFooter className="p-4">
         <Button
           variant="outline"
-          className="justify-start hover:border-destructive hover:bg-destructive p-6 w-full hover:text-white"
+          className="justify-start hover:bg-destructive p-6 hover:border-destructive w-full hover:text-white"
           onClick={handleSignOut}
         >
           <LogOut className="mr-2 w-4 h-4" />

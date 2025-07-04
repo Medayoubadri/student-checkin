@@ -161,7 +161,7 @@ export function StudentsTable({
                 {sortColumn === "gender" &&
                   (sortDirection === "asc" ? " ↑" : " ↓")}
               </TableHead>
-              <TableHead className="hidden w-[250px] md:table-cell">
+              <TableHead className="hidden md:table-cell w-[250px]">
                 {t("PhoneNumber")}
               </TableHead>
               <TableHead className="w-[100px]">{t("Edit")}</TableHead>
@@ -187,7 +187,11 @@ export function StudentsTable({
                   {student.age}
                 </TableCell>
                 <TableCell className="whitespace-nowrap">
-                  {student.gender}
+                  {student.gender === "Female"
+                    ? t("female")
+                    : student.gender === "Male"
+                    ? t("male")
+                    : student.gender}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   {student.phoneNumber}
@@ -227,7 +231,7 @@ export function StudentsTable({
             <Button
               onClick={handleBulkDelete}
               variant="default"
-              className="bg-destructive hover:bg-red-800 drop-shadow-xl shadow-[0px_-10px_100px_rgba(173,0,0)] px-10 py-6 hover:text-white"
+              className="bg-destructive hover:bg-red-800 shadow-[0px_-10px_100px_rgba(173,0,0)] drop-shadow-xl px-10 py-6 hover:text-white"
             >
               {t("deleteBulk", { count: selectedStudents.length })}
             </Button>
@@ -263,7 +267,7 @@ export function StudentsTable({
             ))}
           </SelectContent>
         </Select>
-        <p>
+        <p className="hidden md:block">
           <span className="font-semibold">{filteredStudents.length}</span>{" "}
           {t("studentsTotal")}
         </p>

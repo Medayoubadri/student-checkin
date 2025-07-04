@@ -1,4 +1,5 @@
-import { useState } from "react";
+// app/[locale]/(dashboard)/Home/components/StudentCheckIn.tsx
+import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,15 +11,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { NewStudentModal } from "@/app/[locale]/(dashboard)/Home/components/AddStudentModal";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useTranslations } from "next-intl";
-import { NameInputs } from "@/app/[locale]/(dashboard)/Home/components/InputNames";
+import { studentService } from "@/utils/studentService";
+import { attendanceService } from "@/utils/attendanceService";
+import { attendanceLogService } from "@/utils/attendanceLogService";
 
 interface StudentCheckInProps {
   onCheckIn: () => void;
   refreshRecentActivity: () => void;
+}
+
+interface Student {
+  id: string;
+  name: string;
 }
 
 export function StudentCheckIn({
@@ -27,6 +35,9 @@ export function StudentCheckIn({
 }: StudentCheckInProps) {
   const t = useTranslations("HomePage");
   const [name, setName] = useState("");
+  const [suggestions, setSuggestions] = useState<Student[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -41,20 +52,20 @@ export function StudentCheckIn({
   const handleCheck = async () => {
     try {
       const normalizedName = normalizeName(name);
-      const checkResponse = await fetch(
-        `/api/students/check?name=${encodeURIComponent(normalizedName)}`
-      );
-
-      const existingStudent = await checkResponse.json();
+      const students = await studentService.searchStudents(normalizedName);
+      const existingStudent = students[0];
 
       if (existingStudent) {
         await markAttendance(existingStudent.id);
       } else {
+        setIsLoading(true);
         if (isDesktop) {
           setIsModalOpen(true);
         } else {
           setShowAdditionalFields(true);
         }
+        studentService.invalidateCache();
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error checking student:", error);
@@ -73,27 +84,20 @@ export function StudentCheckIn({
     submittedPhoneNumber: string
   ) => {
     try {
-      const createResponse = await fetch("/api/students", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: submittedName,
-          age: Number.parseInt(submittedAge),
-          gender: submittedGender,
-          phoneNumber: submittedPhoneNumber,
-        }),
+      setIsLoading(true);
+      const newStudent = await studentService.createStudent({
+        name: submittedName,
+        age: Number(submittedAge),
+        gender: submittedGender,
+        phoneNumber: submittedPhoneNumber,
       });
-      if (!createResponse.ok) {
-        throw new Error("Failed to create student");
-      }
-      const newStudent = await createResponse.json();
+
       await markAttendance(newStudent.id);
       setShowAdditionalFields(false);
       setIsModalOpen(false);
       setAge("");
       setGender("");
       setPhoneNumber("");
-      refreshRecentActivity();
     } catch (error) {
       console.error("Error creating student:", error);
       toast({
@@ -101,45 +105,102 @@ export function StudentCheckIn({
         description: "Failed to create student. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const markAttendance = async (studentId: string) => {
-    const attendanceResponse = await fetch("/api/attendance", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ studentId }),
-    });
+    try {
+      // Optimistically invalidate cache before API call
+      const result = await attendanceService.markAttendance(studentId);
+      switch (result.status) {
+        case 200:
+          toast({
+            variant: "success",
+            title: t("checkInSuccess-Title"),
+            description: t("checkInSuccess-Description"),
+          });
+          attendanceLogService.invalidateCache(undefined, new Date());
+          refreshRecentActivity();
+          setName("");
+          onCheckIn();
+          break;
+        case 201:
+          toast({
+            variant: "info",
+            title: t("checkInMarked-Title"),
+            description: t("checkInMarked-Description"),
+          });
+          setName("");
+          break;
 
-    if (attendanceResponse.ok) {
-      toast({
-        variant: "success",
-        title: t("checkInSuccess-Title"),
-        description: t("checkInSuccess-Description"),
-      });
-      setName("");
-      onCheckIn();
-      refreshRecentActivity();
-    } else {
+        case 500:
+          throw new Error(result.message);
+
+        default:
+          toast({
+            variant: "destructive",
+            title: t("checkInError-Title"),
+            description: result.message || t("checkInError-Description"),
+          });
+      }
+    } catch (error) {
+      console.error("Error marking attendance:", error);
       toast({
         variant: "destructive",
         title: t("checkInError-Title"),
         description: t("checkInError-Description"),
       });
     }
-    if (attendanceResponse.status === 201) {
-      toast({
-        variant: "info",
-        title: t("checkInMarked-Title"),
-        description: t("checkInMarked-Description"),
-      });
+  };
+
+  const fetchSuggestions = useCallback(async (query: string) => {
+    try {
+      setIsLoading(true);
+      const students = await studentService.searchStudents(query);
+      setSuggestions(students);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+      setSuggestions([]);
+    } finally {
+      setIsLoading(false);
     }
+  }, []);
+
+  const debouncedFetch = useDebounce(fetchSuggestions, 300);
+
+  // Update handleInputChange to prevent unnecessary state updates
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    if (newValue === name) return;
+
+    setName(newValue);
+    if (newValue.length >= 2) {
+      debouncedFetch(newValue);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleClearName = () => {
+    setName("");
+    setSuggestions([]);
+  };
+
+  const handleSelect = async (student: Student) => {
+    setName(student.name);
+    setSuggestions([]);
+    setIsLoading(true);
+    await markAttendance(student.id);
+    setIsLoading(false);
+    inputRef.current?.focus();
   };
 
   return (
     <Card className="bg-background w-full">
       <CardHeader>
-        <CardTitle className="font-bold text-2xl text-center">
+        <CardTitle className="font-bold text-xl md:text-2xl text-center">
           {t("studentCheckIn")}
         </CardTitle>
       </CardHeader>
@@ -147,19 +208,54 @@ export function StudentCheckIn({
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">{t("fullName")}</Label>
-            <div className="relative">
-              <NameInputs
+            <div className="relative w-full">
+              <Input
+                ref={inputRef}
                 value={name}
-                onChange={setName}
-                onSelectStudent={async (student) => {
-                  await markAttendance(student.id);
-                }}
+                onChange={handleInputChange}
+                placeholder={t("startTypingStudentName")}
               />
+              {suggestions.length > 0 && (
+                <Card className="z-10 absolute mt-1 w-full">
+                  <CardContent className="p-0">
+                    <ul className="bg-background px-2 py-2 rounded-xl max-h-60 overflow-auto">
+                      {suggestions.map((student) => (
+                        <li
+                          key={student.id}
+                          className="hover:bg-gray-100/10 px-4 py-2 rounded-md cursor-pointer"
+                          onClick={() => handleSelect(student)}
+                        >
+                          {student.name}
+                        </li>
+                      ))}
+                      {isLoading && (
+                        <li className="px-4 py-2 text-muted-foreground">
+                          {t("loading")}
+                        </li>
+                      )}
+                    </ul>
+                  </CardContent>
+                </Card>
+              )}
+              {name && (
+                <Button
+                  variant="default"
+                  size="icon"
+                  className="top-0 right-0 absolute bg-transparent hover:bg-transparent shadow-none h-full text-destructive hover:text-red-500"
+                  onClick={handleClearName}
+                >
+                  <X className="mr-4 p-0 !w-5 !h-5" />
+                </Button>
+              )}
             </div>
           </div>
           {!showAdditionalFields && (
-            <Button onClick={handleCheck} className="w-full" disabled={!name}>
-              {t("check")}
+            <Button
+              onClick={handleCheck}
+              className="w-full"
+              disabled={!name || isLoading}
+            >
+              {isLoading ? t("loading") : t("check")}
             </Button>
           )}
           {showAdditionalFields && (
@@ -190,7 +286,7 @@ export function StudentCheckIn({
                       variant="secondary"
                       className="bg-background dark:bg-zinc-900 mt-2 border dark:border-none w-full"
                     >
-                      <span className="flex items-center w-full text-left text-muted-foreground">
+                      <span className="flex items-center w-full text-muted-foreground text-left">
                         {gender
                           ? t(gender as "male" | "female")
                           : t("selectGender")}
@@ -199,11 +295,11 @@ export function StudentCheckIn({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="flex flex-col gap-3 px-4 py-2 w-[320px] lg:w-[400px]">
-                    <DropdownMenuItem onClick={() => setGender("M")}>
-                      {t("male")}
+                    <DropdownMenuItem onClick={() => setGender("Male")}>
+                      {t("Male")}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setGender("F")}>
-                      {t("female")}
+                    <DropdownMenuItem onClick={() => setGender("Female")}>
+                      {t("Female")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -223,20 +319,36 @@ export function StudentCheckIn({
               <Button
                 type="submit"
                 className="w-full"
-                disabled={!name || !age || !gender}
+                disabled={!name || !age || !gender || isLoading}
               >
-                {t("submit")}
+                {isLoading ? t("loading") : t("submit")}
               </Button>
             </form>
           )}
         </div>
         <NewStudentModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            if (isLoading) {
+              setIsModalOpen(false);
+            }
+          }}
           onSubmit={handleSubmit}
           name={name}
+          isLoading={isLoading}
         />
       </CardContent>
     </Card>
   );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+function useDebounce(callback: Function, delay: number) {
+  const timerRef = useRef<number>();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (...args: any[]) => {
+    window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => callback(...args), delay);
+  };
 }

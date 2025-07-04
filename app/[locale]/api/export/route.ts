@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { stringify } from "csv-stringify/sync";
-import * as XLSX from "xlsx";
+import * as ExcelJS from "exceljs";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
@@ -25,8 +25,7 @@ export async function GET(request: Request) {
       orderBy: { name: "asc" },
     });
 
-    const transformedStudents = students.map((student, index) => ({
-      number: index + 1,
+    const transformedStudents = students.map((student) => ({
       fullName: student.name,
       age: student.age,
       gender: student.gender,
@@ -36,7 +35,7 @@ export async function GET(request: Request) {
     if (format === "csv") {
       const csvData = stringify(transformedStudents, {
         header: true,
-        columns: ["number", "fullName", "age", "gender", "phoneNumber"],
+        columns: ["fullName", "age", "gender", "phoneNumber"],
       });
 
       return new NextResponse(csvData, {
@@ -47,22 +46,38 @@ export async function GET(request: Request) {
         },
       });
     } else {
-      const worksheet = XLSX.utils.json_to_sheet(transformedStudents);
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Students");
 
-      XLSX.utils.sheet_add_aoa(
-        worksheet,
-        [["Number", "Full Name", "Age", "Gender", "Phone Number"]],
-        { origin: "A1" }
-      );
+      // Add header row
+      worksheet.addRow(["Full Name", "Age", "Gender", "Phone Number"]);
 
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
-      const excelBuffer = XLSX.write(workbook, {
-        bookType: "xlsx",
-        type: "array",
+      // Style header row
+      worksheet.getRow(1).font = { bold: true };
+      worksheet.getRow(1).alignment = {
+        vertical: "middle",
+        horizontal: "center",
+      };
+
+      // Add data rows
+      transformedStudents.forEach((student) => {
+        worksheet.addRow([
+          student.fullName,
+          student.age,
+          student.gender,
+          student.phoneNumber,
+        ]);
       });
 
-      return new NextResponse(excelBuffer, {
+      // Auto-fit columns
+      worksheet.columns.forEach((column) => {
+        column.width = Math.max(column.width || 10, 15);
+      });
+
+      // Generate Excel buffer
+      const buffer = await workbook.xlsx.writeBuffer();
+
+      return new NextResponse(buffer, {
         headers: {
           "Content-Type":
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

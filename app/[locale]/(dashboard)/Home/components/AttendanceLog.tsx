@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DownloadAttendance } from "./DownloadAttendance";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
+import { attendanceLogService } from "@/utils/attendanceLogService";
 
 interface AttendanceEntry {
   fullName: string;
@@ -32,62 +33,44 @@ export default function AttendanceLog({
   refreshTrigger,
   onAttendanceRemoved,
 }: AttendanceLogProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  // Initialize currentDate with time set to midnight
+  const [currentDate, setCurrentDate] = useState(() => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return now;
+  });
+
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const t = useTranslations("AttendanceLog");
+  const f = useFormatter();
 
   useEffect(() => {
     fetchAttendanceData(currentDate);
   }, [currentDate, refreshTrigger]);
 
   const fetchAttendanceData = async (date: Date) => {
-    setIsLoading(true);
     try {
-      const dailyResponse = await fetch(`/api/attendance/daily?date=${date}`);
-      if (!dailyResponse.ok) {
-        throw new Error("Failed to fetch daily attendance data");
-      }
-      const presentStudents = await dailyResponse.json();
-
+      const presentStudents = await attendanceLogService.getDailyAttendance(
+        date
+      );
       if (presentStudents.length === 0) {
         setAttendanceData([]);
-        setIsLoading(false);
         return;
       }
-
-      const totalAttendancePromises = presentStudents.map(
-        async (student: { id: string }) => {
-          const totalResponse = await fetch(
-            `/api/attendance/total?studentId=${student.id}`
-          );
-          if (!totalResponse.ok) {
-            throw new Error("Failed to fetch total attendance data");
-          }
-          return totalResponse.json();
-        }
-      );
-
-      const totalAttendances = await Promise.all(totalAttendancePromises);
-
+      // Batch fetch all totals
+      const studentIds = presentStudents.map((student) => student.id);
+      const totals = await attendanceLogService.getTotalAttendances(studentIds);
       const formattedData: AttendanceEntry[] = presentStudents.map(
-        (
-          student: { id: string; name: string; createdAt: string },
-          index: number
-        ) => ({
-          fullName: student.name,
-          id: student.id,
-          dailyAttendance: 1, // Since we're only getting present students
-          totalAttendance: totalAttendances[index].total,
-          createdAt: student.createdAt,
+        (student) => ({
+          ...student,
+          totalAttendance: totals[student.id] || 1,
         })
       );
 
       setAttendanceData(formattedData);
-      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching attendance data:", error);
-      setIsLoading(false);
     }
   };
 
@@ -101,40 +84,39 @@ export default function AttendanceLog({
     setCurrentDate((prev) => {
       const newDate = new Date(prev);
       newDate.setDate(prev.getDate() + (direction === "next" ? 1 : -1));
+      newDate.setHours(0, 0, 0, 0); // Ensure midnight
       return newDate;
     });
   };
 
-  const formatDate = t("dateFormat", {
-    date: currentDate,
-    weekday: "",
-    day: "none",
-    month: "long",
-  });
+  // const formatDate = t("dateFormat", {
+  //   date: currentDate,
+  //   weekday: "",
+  //   day: "none",
+  //   month: "long",
+  // });
 
+  // Update handleRemoveAttendance
   const handleRemoveAttendance = async (studentId: string) => {
     try {
-      const response = await fetch(`/api/attendance/remove`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ studentId, date: currentDate }),
+      // Optimistic UI update
+      setAttendanceData((prev) =>
+        prev.filter((entry) => entry.id !== studentId)
+      );
+      await attendanceLogService.removeAttendance(studentId, currentDate);
+      toast({
+        title: t("attendanceRemoved"),
+        description: t("attendanceRemovedDescription"),
+        variant: "success",
       });
-
-      if (response.ok) {
-        toast({
-          title: t("attendanceRemoved"),
-          description: t("attendanceRemovedDescription"),
-          variant: "success",
-        });
-        fetchAttendanceData(currentDate);
+      setTimeout(() => {
+        attendanceLogService.invalidateCache(undefined, currentDate);
+        fetchAttendanceData(currentDate); // Silent background refresh
         onAttendanceRemoved();
-      } else {
-        throw new Error("Failed to remove attendance");
-      }
+      }, 1000);
     } catch (error) {
       console.error("Error removing attendance:", error);
+      fetchAttendanceData(currentDate);
       toast({
         title: t("errorRemovingAttendance"),
         description: t("errorRemovingAttendanceDescription"),
@@ -144,7 +126,7 @@ export default function AttendanceLog({
   };
 
   return (
-    <Card className="flex flex-col bg-background w-full h-[300px]">
+    <Card className="flex flex-col bg-background w-full h-[300px] overflow-hidden">
       <CardHeader className="py-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
@@ -158,8 +140,12 @@ export default function AttendanceLog({
             </Button>
             <Popover>
               <PopoverTrigger asChild>
-                <CardTitle className="text-sm sm:text-base cursor-pointer">
-                  {formatDate}
+                <CardTitle className="text-sm sm:text-base capitalize cursor-pointer">
+                  {f.dateTime(currentDate, {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                  })}
                 </CardTitle>
               </PopoverTrigger>
               <PopoverContent className="p-0 w-auto" align="start">
@@ -168,7 +154,9 @@ export default function AttendanceLog({
                   selected={currentDate}
                   onSelect={(date) => {
                     if (date) {
-                      setCurrentDate(date);
+                      const normalized = new Date(date);
+                      normalized.setHours(0, 0, 0, 0); // Ensure midnight
+                      setCurrentDate(normalized);
                       const trigger = document.querySelector(
                         '[data-state="open"]'
                       );
@@ -235,7 +223,7 @@ export default function AttendanceLog({
             </div>
           ))
         ) : (
-          <div className="flex justify-center items-center h-full text-muted-foreground">
+          <div className="flex justify-center items-center h-full text-muted-foreground text-center">
             {t("noAttendanceRecords")}
           </div>
         )}

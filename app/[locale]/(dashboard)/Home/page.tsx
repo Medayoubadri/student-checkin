@@ -1,14 +1,18 @@
-// app/(dashboard)/Home/page.tsx
+// app/[locale]/(dashboard)/Home/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { StudentCheckIn } from "@/app/[locale]/(dashboard)/Home/components/StudentCheckIn";
 import { MetricsCards } from "@/app/[locale]/(dashboard)/Home/components/MetricsCards";
 import { AttendanceChart } from "@/app/[locale]/(dashboard)/Home/components/AttendanceChart";
+import AttendanceLog from "@/app/[locale]/(dashboard)/Home/components/AttendanceLog";
+import { LoadingSkeleton } from "@/app/[locale]/(dashboard)/Home/components/LoadingSkeleton";
+import { metricsService } from "@/utils/metricsService";
+import { attendanceHistoryService } from "@/utils/attendanceHistoryService";
+import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
-import AttendanceLog from "./components/AttendanceLog";
 
 interface Metrics {
   totalStudents: number;
@@ -24,7 +28,7 @@ interface AttendanceData {
 
 export default function HomePage() {
   const { status } = useSession();
-  const router = useRouter();
+  // const router = useRouter();
   const t = useTranslations("HomePage");
   const [metrics, setMetrics] = useState<Metrics>({
     totalStudents: 0,
@@ -35,72 +39,101 @@ export default function HomePage() {
   const [attendanceData, setAttendanceData] = useState<AttendanceData[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  useEffect(() => {
-    fetchMetrics();
-    fetchAttendanceData();
-  }, []);
-
-  const fetchMetrics = async () => {
+  // Function to fetch metrics data
+  const fetchMetrics = useCallback(async () => {
     try {
-      const response = await fetch("/api/metrics");
-      const data = await response.json();
+      const data = await metricsService.getMetrics();
       setMetrics(data);
     } catch (error) {
       console.error("Error fetching metrics:", error);
+      toast({
+        variant: "destructive",
+        title: t("metrics-toastitle-error"),
+        description: t("metrics-toasdescription-error"),
+      });
+    } finally {
+      setRefreshTrigger((prev) => prev + 1);
     }
+  }, [t]);
+
+  // Function to handle optimistic metrics update
+  const handleOptimisticMetrics = (newStudent = true) => {
+    setMetrics((prev) => {
+      const newTotalAttendance = prev.totalAttendance + 1;
+      const newTodayAttendance = newStudent
+        ? prev.todayAttendance + 1
+        : prev.todayAttendance;
+
+      return {
+        ...prev,
+        todayAttendance: newTodayAttendance,
+        totalAttendance: newTotalAttendance,
+        averageAttendance:
+          prev.totalStudents > 0
+            ? Math.round((newTotalAttendance / prev.totalStudents) * 100)
+            : 0,
+      };
+    });
+
+    // Defer metrics refresh to allow optimistic UI to stay visible
+    setTimeout(fetchMetrics, 3000); // Refresh after 3 second (may need to increase in production)
   };
 
-  const fetchAttendanceData = async () => {
+  // Function to fetch attendance data
+  const fetchAttendanceData = useCallback(async () => {
     try {
-      const response = await fetch("/api/attendance/history");
-      const data = await response.json();
+      const data = await attendanceHistoryService.getHistory();
       setAttendanceData(data);
     } catch (error) {
       console.error("Error fetching attendance data:", error);
+      toast({
+        variant: "destructive",
+        title: t("attendance-toastitle-error"),
+        description: t("attendance-toasdescription-error"),
+      });
     }
-  };
+  }, [t]);
 
   const refreshRecentActivity = () => {
     setRefreshTrigger((prev) => prev + 1);
+    fetchMetrics();
   };
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchMetrics();
+      fetchAttendanceData();
+    }
+  }, [status, fetchAttendanceData, fetchMetrics]);
 
   if (status === "loading") {
     return (
-      <div className="flex justify-center items-center w-full h-full">
-        {t("loading")}
+      <div className="flex items-center w-full">
+        <LoadingSkeleton />
       </div>
     );
   }
 
-  if (status === "unauthenticated") {
-    router.push("/auth/signin");
-    return null;
-  }
+  // if (status === "unauthenticated") {
+  //   router.push("/auth/signin");
+  //   return null;
+  // }
 
   return (
     <div className="flex flex-col items-center gap-4 md:mt-0 p-4 md:p-6 w-full h-full overflow-y-auto">
-      {/* <h1 className="w-full lg:max-w-7xl font-bold text-2xl md:text-4xl">
-        {t("title")}
-      </h1> */}
       <div className="flex flex-col items-center gap-4 w-full lg:max-w-7xl">
         <div className="flex lg:flex-row flex-col gap-4 w-full">
           <StudentCheckIn
-            onCheckIn={() => {
-              fetchMetrics();
-              fetchAttendanceData();
-            }}
+            onCheckIn={() => handleOptimisticMetrics(true)}
             refreshRecentActivity={refreshRecentActivity}
           />
           <AttendanceLog
             refreshTrigger={refreshTrigger}
-            onAttendanceRemoved={() => {
-              fetchMetrics();
-              fetchAttendanceData();
-            }}
+            onAttendanceRemoved={fetchMetrics}
           />
         </div>
         <MetricsCards metrics={metrics} />
-        <div className="lg:block flex-1 hidden w-full">
+        <div className="hidden lg:block flex-1 w-full">
           <AttendanceChart data={attendanceData} />
         </div>
       </div>
