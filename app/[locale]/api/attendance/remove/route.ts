@@ -23,7 +23,7 @@ export async function DELETE(request: Request) {
     }
 
     const attendanceDate = new Date(date);
-    // attendanceDate.setHours(0, 0, 0, 0);
+    attendanceDate.setHours(0, 0, 0, 0);
 
     const nextDay = new Date(attendanceDate);
     nextDay.setDate(nextDay.getDate() + 1);

@@ -34,11 +34,7 @@ export default function AttendanceLog({
   onAttendanceRemoved,
 }: AttendanceLogProps) {
   // Initialize currentDate with time set to midnight
-  const [currentDate, setCurrentDate] = useState(() => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    return now;
-  });
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
   const [isLoading] = useState(false);
@@ -84,7 +80,6 @@ export default function AttendanceLog({
     setCurrentDate((prev) => {
       const newDate = new Date(prev);
       newDate.setDate(prev.getDate() + (direction === "next" ? 1 : -1));
-      newDate.setHours(0, 0, 0, 0); // Ensure midnight
       return newDate;
     });
   };
@@ -155,8 +150,14 @@ export default function AttendanceLog({
                   onSelect={(date) => {
                     if (date) {
                       const normalized = new Date(date);
-                      normalized.setHours(0, 0, 0, 0); // Ensure midnight
-                      setCurrentDate(normalized);
+                      normalized.setHours(0, 0, 0, 0); // Set local midnight
+                      // Convert to UTC date
+                      const utcDate = new Date(
+                        normalized.getTime() -
+                          normalized.getTimezoneOffset() * 60000
+                      );
+                      setCurrentDate(utcDate);
+                      // Close the popover
                       const trigger = document.querySelector(
                         '[data-state="open"]'
                       );
