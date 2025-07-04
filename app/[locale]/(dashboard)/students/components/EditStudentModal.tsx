@@ -109,8 +109,8 @@ export function EditStudentModal({
                   <SelectValue placeholder="Select Gender" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="male">{t("male")}</SelectItem>
-                  <SelectItem value="female">{t("female")}</SelectItem>
+                  <SelectItem value={t("male")}>{t("male")}</SelectItem>
+                  <SelectItem value={t("female")}>{t("female")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

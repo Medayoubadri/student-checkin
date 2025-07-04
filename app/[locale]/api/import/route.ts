@@ -40,16 +40,14 @@ function normalizeName(name: string): string {
 function validateAge(age: string): number | null {
   const cleanedAge = cleanData(age);
   const parsedAge = Number.parseInt(cleanedAge, 10);
-  return !isNaN(parsedAge) && parsedAge > 0 && parsedAge < 120
+  return !isNaN(parsedAge) && parsedAge > 0 && parsedAge < 80
     ? parsedAge
     : null;
 }
 
 function validateGender(gender: string): string {
   const normalizedGender = gender.toLowerCase().trim();
-  return ["male", "female", "NaN"].includes(normalizedGender)
-    ? normalizedGender
-    : "";
+  return ["male", "female"].includes(normalizedGender) ? normalizedGender : "";
 }
 
 export async function POST(req: Request) {

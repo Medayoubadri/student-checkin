@@ -26,12 +26,13 @@
     "selectGender": "Sélectionner le Sexe",
     "male": "Masculin",
     "female": "Féminin",
+    "startTypingStudentName": "Commencez à taper le nom de l'étudiant...",
     "checkInSuccess-Title": "Enregistrement réussi",
     "checkInSuccess-Description": "L'étudiant a été enregistré avec succès.",
     "checkInError-Title": "Erreur d'enregistrement",
     "checkInError-Description": "Une erreur est survenue lors de l'enregistrement.",
     "checkInMarked-Title": "Déjà enregistré",
-    "checkInMarked-Description": "l'étudiant a déjà été marqué comme présent."
+    "checkInMarked-Description": "L'étudiant a déjà été marqué comme présent."
   },
   "AttendanceLog": {
     "attendance": "Présence(s)",
@@ -129,10 +130,12 @@
     "reason": "Raison"
   },
   "ProcessingScreen": {
-    "processingStep1": "Importation des données...",
-    "processingStep2": "Nettoyage des données...",
-    "processingStep3": "Traitement des données...",
-    "processingStep4": "Sauvegarde des données dans la base de données..."
+    "processedBatches": "Lot traité {current} sur {total}",
+    "cleaningData": "Nettoyage des espaces, caractères spéciaux...",
+    "deduplicatingRecords": "Nettoyage des enregistrements dédupliqués...",
+    "importingRecords": "Enregistrement dans la base de données...",
+    "preparing": "Préparation en cours...",
+    "pleaseWait": "Veuillez patienter..."
   },
   "ImportModal": {
     "chooseFile": "Choisir un fichier",
