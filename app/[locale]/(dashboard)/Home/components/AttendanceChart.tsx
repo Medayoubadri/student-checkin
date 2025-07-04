@@ -33,7 +33,7 @@ export function AttendanceChart({ data }: AttendanceChartProps) {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip className="bg-background" />
+              <Tooltip />
               <Line dataKey="attendance" fill="#8884d8" />
             </LineChart>
           </ResponsiveContainer>
