@@ -6,12 +6,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
 
 // Increase timeout and set response limit
-export const config = {
-  api: {
-    responseLimit: false,
-  },
-  maxDuration: 300,
-};
+export const maxDuration = 60;
 
 const prisma = new PrismaClient();
 
