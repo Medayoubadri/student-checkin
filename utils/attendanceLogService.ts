@@ -14,7 +14,6 @@ const CACHE_TTL = 60 * 120 * 1000; // 2 hours
 const formatDateKey = (date: Date) => {
   // Create date at midnight in local timezone
   const localDate = new Date(date);
-  localDate.setHours(0, 0, 0, 0);
   // Get YYYY-MM-DD in local timezone
   return `${localDate.getFullYear()}-${String(
     localDate.getMonth() + 1
