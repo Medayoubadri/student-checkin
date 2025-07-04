@@ -21,7 +21,7 @@ export async function GET() {
     });
 
     const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
     const todayAttendance = await prisma.attendance.count({
       where: {
         date: {
