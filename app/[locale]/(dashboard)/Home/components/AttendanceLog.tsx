@@ -146,7 +146,7 @@ export default function AttendanceLog({
                   onSelect={(date) => {
                     if (date) {
                       const normalized = new Date(date);
-                      normalized.setHours(0, 0, 0, 0); // Ensure midnight
+                      // normalized.setHours(0, 0, 0, 0); // Ensure midnight
                       setCurrentDate(normalized);
                       console.log("Setting date from calendar:", normalized);
                       const trigger = document.querySelector(
