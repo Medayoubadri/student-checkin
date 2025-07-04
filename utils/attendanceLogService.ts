@@ -23,7 +23,6 @@ const formatDateKey = (date: Date) => {
 
 export const attendanceLogService = {
   async getDailyAttendance(date: Date): Promise<AttendanceEntry[]> {
-    console.time("getDailyAttendance");
     const dateKey = formatDateKey(date);
     const cacheKey = `${DAILY_CACHE_KEY}-${dateKey}`;
 
@@ -33,7 +32,6 @@ export const attendanceLogService = {
       const { data, timestamp, forceRefresh } = JSON.parse(cached);
       // Only use cache if TTL is valid and no force refresh is set
       if (!forceRefresh && Date.now() - timestamp < CACHE_TTL) {
-        console.timeEnd("getDailyAttendance");
         return data;
       }
     }
@@ -173,7 +171,5 @@ export const attendanceLogService = {
     if (studentId) {
       localStorage.removeItem(`${TOTAL_CACHE_KEY}-${studentId}`);
     }
-
-    console.log("Cache invalidated for", { studentId, date });
   },
 };

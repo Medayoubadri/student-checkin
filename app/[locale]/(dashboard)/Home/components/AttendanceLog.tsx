@@ -34,11 +34,7 @@ export default function AttendanceLog({
   onAttendanceRemoved,
 }: AttendanceLogProps) {
   // Initialize currentDate with time set to midnight
-  const [currentDate, setCurrentDate] = useState(() => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    return now;
-  });
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
   const [isLoading] = useState(false);
@@ -88,13 +84,6 @@ export default function AttendanceLog({
       return newDate;
     });
   };
-
-  // const formatDate = t("dateFormat", {
-  //   date: currentDate,
-  //   weekday: "",
-  //   day: "none",
-  //   month: "long",
-  // });
 
   // Update handleRemoveAttendance
   const handleRemoveAttendance = async (studentId: string) => {

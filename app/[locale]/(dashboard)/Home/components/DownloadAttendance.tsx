@@ -88,8 +88,6 @@ export function DownloadAttendance({ selectedDate }: DownloadAttendanceProps) {
       }
 
       const data = await response.json();
-      console.log("fetched data:", JSON.stringify(data));
-
       if (data.length === 0) {
         toast({
           title: t("noDataTitle"),
