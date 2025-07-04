@@ -5,6 +5,14 @@ import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
 
+// Increase timeout and set response limit
+export const config = {
+  api: {
+    responseLimit: false,
+  },
+  maxDuration: 300,
+};
+
 const prisma = new PrismaClient();
 
 interface CSVRecord {
