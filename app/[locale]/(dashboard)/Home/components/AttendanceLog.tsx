@@ -80,7 +80,6 @@ export default function AttendanceLog({
     setCurrentDate((prev) => {
       const newDate = new Date(prev);
       newDate.setDate(prev.getDate() + (direction === "next" ? 1 : -1));
-      newDate.setHours(0, 0, 0, 0); // Ensure midnight
       return newDate;
     });
   };
