@@ -57,13 +57,13 @@ export function MainNav() {
                 isActive={pathname === item.href}
                 className={
                   pathname === item.href
-                    ? "!bg-slate-200 dark:!bg-emerald-950 !text-primary !font-extrabold"
+                    ? "!bg-background shadow-md dark:!bg-emerald-950 !text-primary !font-extrabold "
                     : ""
                 }
               >
                 <Link
                   href={item.href}
-                  className="flex items-center hover:dark:bg-emerald-900/15 hover:bg-slate-200/35 mb-2 px-4 py-6 rounded-md"
+                  className="flex items-center hover:dark:bg-emerald-900/15 hover:bg-white active:!bg-white mb-2 px-4 py-6 rounded-md"
                 >
                   <item.icon className="mr-2 !w-6 !h-6" />
                   {item.label}

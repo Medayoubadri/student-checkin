@@ -214,22 +214,26 @@ export function StudentsTable({
             ))}
           </TableBody>
         </Table>
-        <AnimatePresence>
-          {selectedStudents.length > 0 && (
-            <motion.div
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="right-1/3 bottom-4 absolute bg-destructive shadow-lg px-4 py-2 rounded-md text-destructive-foreground"
-            >
-              <Button onClick={handleBulkDelete} variant="destructive">
-                {t("deleteBulk", { count: selectedStudents.length })}
-              </Button>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
+      <AnimatePresence>
+        {selectedStudents.length > 0 && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="right-1/3 bottom-12 absolute rounded-md text-destructive-foreground"
+          >
+            <Button
+              onClick={handleBulkDelete}
+              variant="default"
+              className="bg-destructive hover:bg-red-800 drop-shadow-xl shadow-[0px_-10px_100px_rgba(173,0,0)] px-10 py-6 hover:text-white"
+            >
+              {t("deleteBulk", { count: selectedStudents.length })}
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {currentStudents.length === 0 && (
         <div className="py-4 text-center">
           {selectedDate
