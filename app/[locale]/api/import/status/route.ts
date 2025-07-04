@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
 
-export const runtime = "edge";
-
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
 
