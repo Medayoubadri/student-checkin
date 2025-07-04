@@ -35,7 +35,7 @@ export default function AttendanceLog({
 }: AttendanceLogProps) {
   // Initialize currentDate with time set to midnight
   const [currentDate, setCurrentDate] = useState(new Date());
-
+  console.log("Current Date:", currentDate);
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
   const [isLoading] = useState(false);
   const t = useTranslations("AttendanceLog");
@@ -43,6 +43,7 @@ export default function AttendanceLog({
 
   useEffect(() => {
     fetchAttendanceData(currentDate);
+    console.log("Fetching current date:", currentDate);
   }, [currentDate, refreshTrigger]);
 
   const fetchAttendanceData = async (date: Date) => {
@@ -80,9 +81,10 @@ export default function AttendanceLog({
     setCurrentDate((prev) => {
       const newDate = new Date(prev);
       newDate.setDate(prev.getDate() + (direction === "next" ? 1 : -1));
-      // newDate.setHours(0, 0, 0, 0); // Ensure midnight
+      console.log("Navigated Date:", newDate);
       return newDate;
     });
+    console.log("Navigating Date:", direction);
   };
 
   // Update handleRemoveAttendance
@@ -143,9 +145,10 @@ export default function AttendanceLog({
                   selected={currentDate}
                   onSelect={(date) => {
                     if (date) {
-                      const normalized = new Date(date);
+                      // const normalized = new Date(date);
                       // normalized.setHours(0, 0, 0, 0); // Ensure midnight
-                      setCurrentDate(normalized);
+                      setCurrentDate(date);
+                      console.log("Selected Date:", date);
                       const trigger = document.querySelector(
                         '[data-state="open"]'
                       );
