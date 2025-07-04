@@ -1,7 +1,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -24,20 +23,32 @@ export function DeleteConfirmationDialog({
 }: DeleteConfirmationDialogProps) {
   const t = useTranslations("DeleteConfirmationDialog");
 
+  console.log("DeleteConfirmationDialog rendered, isOpen:", isOpen);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent aria-description="DeleteConfirmationDialog">
         <DialogHeader>
           <DialogTitle>{t("deleteConfirmationTitle")}</DialogTitle>
-          <DialogDescription>
-            {t("deleteConfirmationDescription", { itemName })}
-          </DialogDescription>
         </DialogHeader>
+        <p className="text-muted-foreground text-sm">
+          {t("deleteConfirmationDescription", { itemName })}
+        </p>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              onClose();
+            }}
+          >
             {t("cancel")}
           </Button>
-          <Button variant="destructive" onClick={onConfirm}>
+          <Button
+            variant="destructive"
+            onClick={() => {
+              onConfirm();
+            }}
+          >
             {t("delete")}
           </Button>
         </DialogFooter>

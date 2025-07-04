@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { StudentCheckIn } from "@/app/[locale]/(dashboard)/Home/components/StudentCheckIn";
 import { MetricsCards } from "@/app/[locale]/(dashboard)/Home/components/MetricsCards";
 import { AttendanceChart } from "@/app/[locale]/(dashboard)/Home/components/AttendanceChart";
-// import { RecentActivityLog } from "@/app/[locale]/(dashboard)/Home/components/RecentActivityLog";
 import { useTranslations } from "next-intl";
 import AttendanceLog from "./components/AttendanceLog";
 
@@ -92,7 +91,13 @@ export default function HomePage() {
             }}
             refreshRecentActivity={refreshRecentActivity}
           />
-          <AttendanceLog refreshTrigger={refreshTrigger} />
+          <AttendanceLog
+            refreshTrigger={refreshTrigger}
+            onAttendanceRemoved={() => {
+              fetchMetrics();
+              fetchAttendanceData();
+            }}
+          />
         </div>
         <MetricsCards metrics={metrics} />
         <div className="lg:block flex-1 hidden w-full">

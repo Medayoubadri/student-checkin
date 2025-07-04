@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DownloadAttendance } from "./DownloadAttendance";
@@ -13,19 +13,25 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/hooks/use-toast";
 
 interface AttendanceEntry {
   fullName: string;
   id: string;
   dailyAttendance: number;
   totalAttendance: number;
+  createdAt: string;
 }
 
 interface AttendanceLogProps {
   refreshTrigger: number;
+  onAttendanceRemoved: () => void;
 }
 
-export default function AttendanceLog({ refreshTrigger }: AttendanceLogProps) {
+export default function AttendanceLog({
+  refreshTrigger,
+  onAttendanceRemoved,
+}: AttendanceLogProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,18 +44,24 @@ export default function AttendanceLog({ refreshTrigger }: AttendanceLogProps) {
   const fetchAttendanceData = async (date: Date) => {
     setIsLoading(true);
     try {
-      const studentsRes = await fetch("/api/students");
-      const students = await studentsRes.json();
+      // const studentsRes = await fetch("/api/students");
+      // const students = await studentsRes.json();
       const dailyResponse = await fetch(`/api/attendance/daily?date=${date}`);
       if (!dailyResponse.ok) {
         throw new Error("Failed to fetch daily attendance data");
       }
-      const dailyData = await dailyResponse.json();
+      const presentStudents = await dailyResponse.json();
 
-      const totalAttendancePromises = students.map(
-        async (record: { id: string }) => {
+      if (presentStudents.length === 0) {
+        setAttendanceData([]);
+        setIsLoading(false);
+        return;
+      }
+
+      const totalAttendancePromises = presentStudents.map(
+        async (student: { id: string }) => {
           const totalResponse = await fetch(
-            `/api/attendance/total?studentId=${record.id}`
+            `/api/attendance/total?studentId=${student.id}`
           );
           if (!totalResponse.ok) {
             throw new Error("Failed to fetch total attendance data");
@@ -60,12 +72,16 @@ export default function AttendanceLog({ refreshTrigger }: AttendanceLogProps) {
 
       const totalAttendances = await Promise.all(totalAttendancePromises);
 
-      const formattedData: AttendanceEntry[] = dailyData.map(
-        (record: { fullName: string; id: string }, index: number) => ({
-          fullName: record.fullName,
-          id: record.id,
-          dailyAttendance: 1, // Assuming presence in daily data means attended
+      const formattedData: AttendanceEntry[] = presentStudents.map(
+        (
+          student: { id: string; name: string; createdAt: string },
+          index: number
+        ) => ({
+          fullName: student.name,
+          id: student.id,
+          dailyAttendance: 1, // Since we're only getting present students
           totalAttendance: totalAttendances[index].total,
+          createdAt: student.createdAt,
         })
       );
 
@@ -77,11 +93,11 @@ export default function AttendanceLog({ refreshTrigger }: AttendanceLogProps) {
     }
   };
 
-  // const isNewStudent = (studentId: Date) => {
-  //   const oneWeekAgo = new Date();
-  //   oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
-  //   return oneWeekAgo <= new Date(studentId);
-  // };
+  const isNewStudent = (createdAt: string) => {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
+    return new Date(createdAt) >= oneWeekAgo;
+  };
 
   const navigateDate = (direction: "prev" | "next") => {
     setCurrentDate((prev) => {
@@ -97,6 +113,37 @@ export default function AttendanceLog({ refreshTrigger }: AttendanceLogProps) {
     day: "none",
     month: "long",
   });
+
+  const handleRemoveAttendance = async (studentId: string) => {
+    try {
+      const response = await fetch(`/api/attendance/remove`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ studentId, date: currentDate }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: t("attendanceRemoved"),
+          description: t("attendanceRemovedDescription"),
+          variant: "success",
+        });
+        fetchAttendanceData(currentDate);
+        onAttendanceRemoved();
+      } else {
+        throw new Error("Failed to remove attendance");
+      }
+    } catch (error) {
+      console.error("Error removing attendance:", error);
+      toast({
+        title: t("errorRemovingAttendance"),
+        description: t("errorRemovingAttendanceDescription"),
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <Card className="flex flex-col bg-background w-full h-[300px]">
@@ -165,17 +212,27 @@ export default function AttendanceLog({ refreshTrigger }: AttendanceLogProps) {
               className="flex justify-between items-center py-2 border-b border-border last:border-b-0"
             >
               <div className="flex items-center gap-4">
-                {/* <div
+                <div
                   className={`w-2 h-2 rounded-full ${
-                    isNewStudent(currentDate) ? "bg-emerald-500" : "bg-white"
+                    isNewStudent(entry.createdAt)
+                      ? "bg-emerald-500"
+                      : "bg-zinc-300 dark:bg-zinc-700"
                   }`}
-                /> */}
+                />
                 <span className="font-medium text-sm">{entry.fullName}</span>
               </div>
-              <div className="text-muted-foreground text-sm">
+              <div className="flex justify-center items-center text-muted-foreground text-sm">
                 <span>
                   {t("totalAttendance", { count: entry.totalAttendance })}
                 </span>
+                <Button
+                  variant="default"
+                  onClick={() => handleRemoveAttendance(entry.id)}
+                  className="bg-transparent hover:bg-transparent w-4 h-6 text-destructive hover:text-destructive/90 hover:text-red-500"
+                >
+                  <X className="!w-5 !h-5" />
+                  <span className="sr-only">{t("removeAttendance")}</span>
+                </Button>
               </div>
             </div>
           ))

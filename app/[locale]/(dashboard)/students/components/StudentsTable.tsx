@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   Table,
@@ -26,7 +28,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 interface Student {
   id: string;
@@ -60,8 +61,6 @@ export function StudentsTable({
   const [sortColumn, setSortColumn] = useState<keyof Student>("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
 
   const handleSort = (column: keyof Student) => {
     if (column === sortColumn) {
@@ -114,16 +113,7 @@ export function StudentsTable({
   };
 
   const handleDeleteClick = (studentId: string) => {
-    setStudentToDelete(studentId);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleConfirmDelete = () => {
-    if (studentToDelete) {
-      onDelete(studentToDelete);
-    }
-    setIsDeleteDialogOpen(false);
-    setStudentToDelete(null);
+    onDelete(studentId);
   };
 
   const handleBulkDelete = () => {
@@ -310,13 +300,6 @@ export function StudentsTable({
           </Button>
         </div>
       </div>
-
-      <DeleteConfirmationDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={handleConfirmDelete}
-        itemName={t("student")}
-      />
     </>
   );
 }
