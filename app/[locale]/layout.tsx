@@ -12,8 +12,8 @@ import { getMessages } from "next-intl/server";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Student Attendance Manager",
-  description: "Efficiently manage student attendance",
+  title: "Check-in Mate",
+  description: "Check mate for your check-ins",
 };
 
 export function generateStaticParams() {

@@ -7,8 +7,9 @@ import { useRouter } from "next/navigation";
 import { StudentCheckIn } from "@/app/[locale]/(dashboard)/Home/components/StudentCheckIn";
 import { MetricsCards } from "@/app/[locale]/(dashboard)/Home/components/MetricsCards";
 import { AttendanceChart } from "@/app/[locale]/(dashboard)/Home/components/AttendanceChart";
-import { RecentActivityLog } from "@/app/[locale]/(dashboard)/Home/components/RecentActivityLog";
+// import { RecentActivityLog } from "@/app/[locale]/(dashboard)/Home/components/RecentActivityLog";
 import { useTranslations } from "next-intl";
+import AttendanceLog from "./components/AttendanceLog";
 
 interface Metrics {
   totalStudents: number;
@@ -79,9 +80,9 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col items-center gap-4 md:mt-0 p-4 md:p-6 w-full h-full overflow-y-auto">
-      <h1 className="w-full lg:max-w-7xl font-bold text-2xl md:text-4xl">
+      {/* <h1 className="w-full lg:max-w-7xl font-bold text-2xl md:text-4xl">
         {t("title")}
-      </h1>
+      </h1> */}
       <div className="flex flex-col items-center gap-4 w-full lg:max-w-7xl">
         <div className="flex lg:flex-row flex-col gap-4 w-full">
           <StudentCheckIn
@@ -91,7 +92,7 @@ export default function HomePage() {
             }}
             refreshRecentActivity={refreshRecentActivity}
           />
-          <RecentActivityLog refreshTrigger={refreshTrigger} />
+          <AttendanceLog refreshTrigger={refreshTrigger} />
         </div>
         <MetricsCards metrics={metrics} />
         <div className="lg:block flex-1 hidden w-full">

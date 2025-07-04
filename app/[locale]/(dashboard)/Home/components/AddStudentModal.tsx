@@ -75,6 +75,13 @@ export function NewStudentModal({
                 onChange={(e) => setAge(e.target.value)}
                 className="col-span-3"
                 required
+                min="1"
+                max="80"
+                onInput={(e) => {
+                  const input = e.currentTarget;
+                  if (input.value < "1") input.value = "1";
+                  if (input.value > "80") input.value = "80";
+                }}
               />
             </div>
             <div className="items-center gap-4 grid grid-cols-4">
@@ -105,7 +112,9 @@ export function NewStudentModal({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">{t("addStudent")}</Button>
+            <Button type="submit" disabled={!name || !age || !gender}>
+              {t("addStudent")}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

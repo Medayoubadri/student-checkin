@@ -22,7 +22,7 @@ interface AttendanceChartProps {
 export function AttendanceChart({ data }: AttendanceChartProps) {
   const t = useTranslations("AttendanceChart");
   return (
-    <Card className="w-full">
+    <Card className="bg-background w-full">
       <CardHeader>
         <CardTitle>{t("title")}</CardTitle>
       </CardHeader>
@@ -33,7 +33,7 @@ export function AttendanceChart({ data }: AttendanceChartProps) {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip />
+              <Tooltip className="bg-background" />
               <Line dataKey="attendance" fill="#8884d8" />
             </LineChart>
           </ResponsiveContainer>

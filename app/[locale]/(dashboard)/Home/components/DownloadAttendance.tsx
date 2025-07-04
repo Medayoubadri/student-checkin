@@ -1,38 +1,65 @@
+// app/[locale]/(dashboard)/Home/components/DownloadAttendance.tsx
+"use client";
+
 import { useState } from "react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as XLSX from "xlsx";
+import { useTranslations } from "next-intl";
+import { toast } from "@/hooks/use-toast";
 
 interface DownloadAttendanceProps {
-  className?: string;
+  selectedDate: Date;
 }
 
-export function DownloadAttendance({ className }: DownloadAttendanceProps) {
+export function DownloadAttendance({ selectedDate }: DownloadAttendanceProps) {
   const [isDownloading, setIsDownloading] = useState(false);
+  const t = useTranslations("DownloadAttendance");
 
   const downloadAttendanceReport = async () => {
     try {
       setIsDownloading(true);
-      const today = new Date().toISOString().split("T")[0];
+      // const isoDate = selectedDate.toLocaleDateString().replaceAll("/", "-");
+      const formattedDate = t("dateFormat", {
+        date: selectedDate,
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
       const response = await fetch(
-        `/api/attendance/daily-report?date=${today}`
+        `/api/attendance/daily?date=${selectedDate}`
       );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch attendance data");
+      }
+
       const data = await response.json();
+
+      if (data.length === 0) {
+        toast({
+          title: t("noDataTitle"),
+          description: t("noDataDescription"),
+          variant: "warning",
+        });
+        return;
+      }
 
       // Prepare the data for Excel
       const worksheetData = [
-        ["Chess Club Attendance Report"], // Title
-        [], // Empty row for spacing
-        [], // Empty row for spacing
-        [`Date: ${today}`], // Date
-        [], // Empty row for spacing
-        ["Full Name", "Age", "Gender", "Attendance"], // Headers
+        [t("reportTitle")],
+        [],
+        [],
+        [t("dateLabel", { date: formattedDate })],
+        [],
+        [t("fullName"), t("age"), t("gender"), t("phone")],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ...data.map((record: any) => [
           record.fullName,
           record.age,
           record.gender,
-          record.attendance,
+          record.phone,
         ]),
       ];
 
@@ -44,14 +71,14 @@ export function DownloadAttendance({ className }: DownloadAttendanceProps) {
       ws["!merges"] = [
         { s: { r: 0, c: 0 }, e: { r: 2, c: 3 } },
         { s: { r: 3, c: 0 }, e: { r: 3, c: 3 } },
-      ]; // Merge cells for title
+      ];
 
       // Style the title cell
       const titleCell = ws[XLSX.utils.encode_cell({ r: 0, c: 0 })];
       titleCell.s = {
         font: {
           bold: true,
-          size: 20, // Font size (approximately 20pt)
+          size: 20,
         },
       };
 
@@ -64,20 +91,26 @@ export function DownloadAttendance({ className }: DownloadAttendanceProps) {
       };
 
       // Set column widths
-      ws["!cols"] = [
-        { wch: 30 }, // Full Name
-        { wch: 10 }, // Age
-        { wch: 15 }, // Gender
-        { wch: 15 }, // Attendance
-      ];
+      ws["!cols"] = [{ wch: 30 }, { wch: 10 }, { wch: 15 }, { wch: 15 }];
 
       // Add the worksheet to the workbook
       XLSX.utils.book_append_sheet(wb, ws, "Attendance");
 
       // Generate the file
-      XLSX.writeFile(wb, `attendance-${today}.xlsx`);
+      XLSX.writeFile(wb, `${t("attendanceFileName")}-${formattedDate}.xlsx`);
+
+      toast({
+        title: t("downloadSuccess"),
+        description: t("downloadSuccessDescription"),
+        variant: "success",
+      });
     } catch (error) {
       console.error("Error downloading attendance report:", error);
+      toast({
+        title: t("downloadError"),
+        description: t("downloadErrorDescription"),
+        variant: "destructive",
+      });
     } finally {
       setIsDownloading(false);
     }
@@ -89,9 +122,10 @@ export function DownloadAttendance({ className }: DownloadAttendanceProps) {
       size="sm"
       onClick={downloadAttendanceReport}
       disabled={isDownloading}
-      className={className}
+      className="gap-2 hover:border-green-600 bg-primary font-medium text-primary-foreground"
     >
-      <Download className="!w-5 !h-5" />
+      <Download className="w-5 h-5" />
+      <span className="md:block hidden">{t("download")}</span>
     </Button>
   );
 }

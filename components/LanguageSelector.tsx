@@ -22,12 +22,12 @@ export function LanguageSelector() {
 
   return (
     <Select value={locale} onValueChange={changeLanguage}>
-      <SelectTrigger className="w-fit">
+      <SelectTrigger className="bg-background w-fit">
         <SelectValue placeholder="Select Language" />
       </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="en">Eng</SelectItem>
+      <SelectContent align="end">
         <SelectItem value="fr">Fr</SelectItem>
+        <SelectItem value="en">Eng</SelectItem>
       </SelectContent>
     </Select>
   );

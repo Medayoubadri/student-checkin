@@ -25,8 +25,8 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative rounded-full w-8 h-8">
-          <Avatar className="w-8 h-8">
+        <Button variant="ghost" className="relative w-8 h-8">
+          <Avatar className="rounded-md w-8 h-8">
             <AvatarImage
               src={session?.user?.image || ""}
               alt={session?.user?.name || ""}

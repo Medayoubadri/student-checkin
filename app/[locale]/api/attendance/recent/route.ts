@@ -1,3 +1,4 @@
+// app/[locale]/api/attendance/recent/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
@@ -13,10 +14,16 @@ export async function GET() {
   }
 
   try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const recentActivity = await prisma.attendance.findMany({
       where: {
         student: {
           userId: session.user.id,
+        },
+        date: {
+          gte: today,
         },
       },
       select: {

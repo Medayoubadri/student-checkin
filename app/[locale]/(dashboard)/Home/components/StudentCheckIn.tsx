@@ -104,29 +104,27 @@ export function StudentCheckIn({
       body: JSON.stringify({ studentId }),
     });
 
-    const result = await attendanceResponse.json();
-
     if (attendanceResponse.ok) {
       toast({
         variant: "success",
-        title: "Attendance",
-        description: result.message,
+        title: t("checkInSuccess-Title"),
+        description: t("checkInSuccess-Description"),
       });
       setName("");
       onCheckIn();
       refreshRecentActivity();
     } else {
       toast({
-        title: "Error",
-        description: result.error,
         variant: "destructive",
+        title: t("checkInError-Title"),
+        description: t("checkInError-Description"),
       });
     }
     if (attendanceResponse.status === 201) {
       toast({
         variant: "info",
-        title: "Already Marked",
-        description: result.message,
+        title: t("checkInMarked-Title"),
+        description: t("checkInMarked-Description"),
       });
     }
   };

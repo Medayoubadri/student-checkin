@@ -1,3 +1,4 @@
+// app/[locale]/api/attendance/daily/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
@@ -23,18 +24,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+    const targetDate = new Date(date);
+    targetDate.setUTCHours(0, 0, 0, 0);
 
     const attendanceData = await prisma.attendance.findMany({
       where: {
-        date: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
+        date: targetDate,
         student: {
           userId: session.user.id,
         },
@@ -45,6 +40,7 @@ export async function GET(request: Request) {
             name: true,
             age: true,
             gender: true,
+            phoneNumber: true,
           },
         },
       },
@@ -53,13 +49,17 @@ export async function GET(request: Request) {
       },
     });
 
+    // console.log("Attendance Data:", attendanceData);
+
     const formattedData = attendanceData.map((record) => ({
       fullName: record.student.name,
       age: record.student.age,
       gender: record.student.gender,
-      attendance: "Present",
-      checkInTime: record.date.toISOString(),
+      phone: record.student.phoneNumber || "",
+      checkInTime: record.date ? record.date.toISOString() : "",
     }));
+
+    // console.log("Formatted Data:", formattedData);
 
     return NextResponse.json(formattedData);
   } catch (error) {
