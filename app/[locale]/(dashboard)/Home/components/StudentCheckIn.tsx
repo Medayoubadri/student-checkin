@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -199,13 +199,9 @@ export function StudentCheckIn({
 
   return (
     <Card className="bg-background w-full">
-      <CardHeader>
-        <CardTitle>
-          <h2 className="font-medium text-xl md:text-2xl tracking-tight">
-            {t("studentCheckIn")}
-          </h2>
-        </CardTitle>
-      </CardHeader>
+      <div className="px-6 py-4 pt-6">
+        <h2 className="font-semibold text-lg">{t("studentCheckIn")}</h2>
+      </div>
       <CardContent>
         <div className="space-y-4">
           <div className="space-y-2">
