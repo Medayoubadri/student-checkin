@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { StudentsTable } from "./components/StudentsTable";
@@ -27,7 +26,6 @@ interface Student {
 export default function StudentsPage() {
   const { status } = useSession();
   const t = useTranslations("StudentsPage");
-  const router = useRouter();
   const { toast } = useToast();
   const [students, setStudents] = useState<Student[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,8 +34,10 @@ export default function StudentsPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [studentsToDelete, setStudentsToDelete] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchStudents = useCallback(async () => {
+    setIsLoading(true);
     try {
       let url = "/api/students";
       if (selectedDate) {
@@ -54,6 +54,8 @@ export default function StudentsPage() {
     } catch (error) {
       console.error("Error fetching students:", error);
       setStudents([]);
+    } finally {
+      setIsLoading(false);
     }
   }, [selectedDate]);
 
@@ -69,11 +71,6 @@ export default function StudentsPage() {
         {t("loading")}
       </div>
     );
-  }
-
-  if (status === "unauthenticated") {
-    router.push("/auth/signin");
-    return null;
   }
 
   const handleClearSearch = () => {
@@ -188,7 +185,7 @@ export default function StudentsPage() {
           <div className="flex md:flex-row flex-col md:justify-between gap-4 md:space-x-4 mb-4 w-full">
             <div className="flex md:flex-row flex-col md:items-center gap-4 w-full md:w-auto">
               <div className="relative w-full md:w-72">
-                <Search className="top-1/2 left-2 absolute w-4 h-4 text-muted-foreground transform -translate-y-1/2" />
+                <Search className="top-1/2 left-2 absolute w-4 h-4 text-muted-foreground -translate-y-1/2 transform" />
                 <Input
                   placeholder={t("SearchPlaceholder")}
                   value={searchTerm}
@@ -226,6 +223,7 @@ export default function StudentsPage() {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onBulkDelete={handleBulkDelete}
+            isLoading={isLoading}
           />
           <EditStudentModal
             student={editingStudent}
