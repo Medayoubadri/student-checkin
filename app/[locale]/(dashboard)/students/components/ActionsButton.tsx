@@ -46,7 +46,7 @@ export function ActionsButton({
             {t("actions")}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className="bg-background rounded-xl">
           <DropdownMenuItem onSelect={() => setIsImportModalOpen(true)}>
             <DownloadIcon className="mr-2 w-4 h-4" />
             {t("importStudents")}
