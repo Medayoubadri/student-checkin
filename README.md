@@ -8,6 +8,10 @@
 
 The Students Attendance System is a modern web application designed to streamline the process of tracking student attendance in educational institutions. It provides an intuitive interface for managing student records and attendance data.
 
+## 🔗 Live Preview
+
+Check out the live demo of student checkin here: [Live Preview](https://check-in-mate.vercel.app/)
+
 ## 🌟 Features
 
 - 📝 Easy attendance tracking and management
