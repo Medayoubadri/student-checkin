@@ -42,8 +42,8 @@ The Students Attendance System is a modern web application designed to streamlin
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Medayoubadri/check-in-mate.git
-cd check-in-mate
+git clone https://github.com/Medayoubadri/student-checkin.git
+cd student-checkin
 ```
 
 2. Install dependencies:
@@ -83,8 +83,3 @@ yarn dev
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## ☕ Buy Me a Coffee
-
-If you enjoy using this project, consider supporting my work!  
-[Buy Me a Coffee ☕](https://buymeacoffee.com/medayoubadri)
