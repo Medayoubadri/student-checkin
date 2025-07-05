@@ -22,7 +22,7 @@ export async function GET() {
       orderBy: {
         date: "asc",
       },
-      take: 30, // Last 30 days
+      take: 7, // Last 30 days
     });
 
     const formattedData = attendanceData.map((item) => ({

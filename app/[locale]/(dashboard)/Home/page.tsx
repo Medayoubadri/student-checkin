@@ -12,6 +12,7 @@ import { metricsService } from "@/utils/metricsService";
 import { attendanceHistoryService } from "@/utils/attendanceHistoryService";
 import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
+import { attendanceLogService } from "@/utils/attendanceLogService";
 
 interface Metrics {
   totalStudents: number;
@@ -93,6 +94,9 @@ export default function HomePage() {
   }, [t]);
 
   const refreshRecentActivity = () => {
+    attendanceHistoryService.invalidateCache();
+    attendanceLogService.invalidateCache(undefined, new Date());
+    fetchAttendanceData();
     setRefreshTrigger((prev) => prev + 1);
     fetchMetrics();
   };

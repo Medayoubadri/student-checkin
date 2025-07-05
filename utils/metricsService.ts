@@ -22,12 +22,11 @@ export const metricsService = {
 
     const response = await fetch("/api/metrics");
     const data = await response.json();
-    console.log("Metrics data:", JSON.stringify(data));
     localStorage.setItem(
       METRICS_CACHE_KEY,
       JSON.stringify({
         data,
-        // timestamp: new Date().getTime(),
+        timestamp: Date.now(),
       })
     );
     return data;

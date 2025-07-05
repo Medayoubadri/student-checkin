@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const { studentId } = await request.json();
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setUTCHours(0, 0, 0, 0);
 
     const existingAttendance = await prisma.attendance.findFirst({
       where: {

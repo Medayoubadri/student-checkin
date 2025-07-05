@@ -18,6 +18,7 @@ import { useTranslations } from "next-intl";
 import { studentService } from "@/utils/studentService";
 import { attendanceService } from "@/utils/attendanceService";
 import { attendanceLogService } from "@/utils/attendanceLogService";
+import { attendanceHistoryService } from "@/utils/attendanceHistoryService";
 
 interface StudentCheckInProps {
   onCheckIn: () => void;
@@ -93,6 +94,7 @@ export function StudentCheckIn({
       });
 
       await markAttendance(newStudent.id);
+      attendanceHistoryService.invalidateCache();
       setShowAdditionalFields(false);
       setIsModalOpen(false);
       setAge("");

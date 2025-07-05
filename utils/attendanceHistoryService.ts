@@ -1,6 +1,6 @@
 // app/services/attendanceHistoryService.ts
 const HISTORY_CACHE_KEY = "attendance-history";
-const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+const CACHE_TTL = 60 * 120 * 1000; // 2 hours
 
 interface AttendanceData {
   date: string;
@@ -18,6 +18,9 @@ export const attendanceHistoryService = {
     }
 
     const response = await fetch("/api/attendance/history");
+    if (!response.ok) {
+      throw new Error("Failed to fetch attendance history");
+    }
     const data = await response.json();
     localStorage.setItem(
       HISTORY_CACHE_KEY,
