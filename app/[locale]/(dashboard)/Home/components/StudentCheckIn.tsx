@@ -46,7 +46,7 @@ export function StudentCheckIn({
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const normalizeName = (name: string): string => {
-    return name.toLowerCase().split(" ").sort().join(" ");
+    return name;
   };
 
   const handleCheck = async () => {
@@ -113,37 +113,35 @@ export function StudentCheckIn({
   const markAttendance = async (studentId: string) => {
     try {
       // Optimistically invalidate cache before API call
+      const cachedAttendance = attendanceService.getCachedAttendance();
+      const isMarked = cachedAttendance.some(
+        (a) =>
+          a.studentId === studentId &&
+          new Date(a.date).toDateString() === new Date().toDateString()
+      );
+      // const result = await attendanceService.markAttendance(studentId);
+      if (isMarked) {
+        toast({
+          variant: "info",
+          title: t("checkInMarked-Title"),
+          description: t("checkInMarked-Description"),
+        });
+        setName("");
+        return;
+      }
+      setIsLoading(true);
       const result = await attendanceService.markAttendance(studentId);
-      switch (result.status) {
-        case 200:
-          toast({
-            variant: "success",
-            title: t("checkInSuccess-Title"),
-            description: t("checkInSuccess-Description"),
-          });
-          attendanceLogService.invalidateCache(undefined, new Date());
-          refreshRecentActivity();
-          setName("");
-          onCheckIn();
-          break;
-        case 201:
-          toast({
-            variant: "info",
-            title: t("checkInMarked-Title"),
-            description: t("checkInMarked-Description"),
-          });
-          setName("");
-          break;
-
-        case 500:
-          throw new Error(result.message);
-
-        default:
-          toast({
-            variant: "destructive",
-            title: t("checkInError-Title"),
-            description: result.message || t("checkInError-Description"),
-          });
+      if (result.status === 200) {
+        toast({
+          variant: "success",
+          title: t("checkInSuccess-Title"),
+          description: t("checkInSuccess-Description"),
+        });
+        onCheckIn();
+        refreshRecentActivity();
+        attendanceLogService.invalidateCache(undefined, new Date());
+        setName("");
+        setSuggestions([]);
       }
     } catch (error) {
       console.error("Error marking attendance:", error);
@@ -174,7 +172,6 @@ export function StudentCheckIn({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     if (newValue === name) return;
-
     setName(newValue);
     if (newValue.length >= 2) {
       debouncedFetch(newValue);
