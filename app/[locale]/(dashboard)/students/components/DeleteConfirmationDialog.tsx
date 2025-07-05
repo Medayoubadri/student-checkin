@@ -23,8 +23,6 @@ export function DeleteConfirmationDialog({
 }: DeleteConfirmationDialogProps) {
   const t = useTranslations("DeleteConfirmationDialog");
 
-  console.log("DeleteConfirmationDialog rendered, isOpen:", isOpen);
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent aria-description="DeleteConfirmationDialog">

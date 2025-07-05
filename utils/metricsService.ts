@@ -1,7 +1,7 @@
 // utils/metricsService.ts - A utility service for metrics collection and handling
 
 const METRICS_CACHE_KEY = "metrics";
-const CACHE_TTL = 1 * 2 * 1000; // 2 seconds
+const CACHE_TTL = 60 * 120 * 1000; // 2 seconds
 
 interface Metrics {
   totalStudents: number;

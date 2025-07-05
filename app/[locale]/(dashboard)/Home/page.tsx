@@ -12,7 +12,6 @@ import { metricsService } from "@/utils/metricsService";
 import { attendanceHistoryService } from "@/utils/attendanceHistoryService";
 import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
-import { attendanceLogService } from "@/utils/attendanceLogService";
 
 interface Metrics {
   totalStudents: number;
@@ -40,9 +39,14 @@ export default function HomePage() {
 
   // Function to fetch metrics data
   const fetchMetrics = useCallback(async () => {
+    // Invalidate cache before fetching new data
+    metricsService.invalidateCache();
+    attendanceHistoryService.invalidateCache();
     try {
-      const data = await metricsService.getMetrics();
-      setMetrics(data);
+      const metricsdata = await metricsService.getMetrics();
+      const attendanceData = await attendanceHistoryService.getHistory();
+      setMetrics(metricsdata);
+      setAttendanceData(attendanceData);
     } catch (error) {
       console.error("Error fetching metrics:", error);
       toast({
@@ -50,8 +54,6 @@ export default function HomePage() {
         title: t("metrics-toastitle-error"),
         description: t("metrics-toasdescription-error"),
       });
-    } finally {
-      setRefreshTrigger((prev) => prev + 1);
     }
   }, [t]);
 
@@ -75,28 +77,10 @@ export default function HomePage() {
     });
 
     // Defer metrics refresh to allow optimistic UI to stay visible
-    setTimeout(fetchMetrics, 3000); // Refresh after 3 second (may need to increase in production)
+    setTimeout(fetchMetrics, 3000); // Refresh after 3 seconds (may need to increase in production depending on the Server response time)
   };
 
-  // Function to fetch attendance data
-  const fetchAttendanceData = useCallback(async () => {
-    try {
-      const data = await attendanceHistoryService.getHistory();
-      setAttendanceData(data);
-    } catch (error) {
-      console.error("Error fetching attendance data:", error);
-      toast({
-        variant: "destructive",
-        title: t("attendance-toastitle-error"),
-        description: t("attendance-toasdescription-error"),
-      });
-    }
-  }, [t]);
-
   const refreshRecentActivity = () => {
-    attendanceHistoryService.invalidateCache();
-    attendanceLogService.invalidateCache(undefined, new Date());
-    fetchAttendanceData();
     setRefreshTrigger((prev) => prev + 1);
     fetchMetrics();
   };
@@ -104,9 +88,11 @@ export default function HomePage() {
   useEffect(() => {
     if (status === "authenticated") {
       fetchMetrics();
-      fetchAttendanceData();
+      // Schedule attendance data fetch every minute
+      const interval = setInterval(fetchMetrics, 60000);
+      return () => clearInterval(interval); // Cleanup interval on unmount
     }
-  }, [status, fetchAttendanceData, fetchMetrics]);
+  }, [status, fetchMetrics]);
 
   if (status === "loading") {
     return (
@@ -131,7 +117,10 @@ export default function HomePage() {
         </div>
         <MetricsCards metrics={metrics} />
         <div className="hidden lg:block flex-1 w-full">
-          <AttendanceChart data={attendanceData} />
+          <AttendanceChart
+            data={attendanceData}
+            onDataUpdate={refreshRecentActivity}
+          />
         </div>
       </div>
     </div>

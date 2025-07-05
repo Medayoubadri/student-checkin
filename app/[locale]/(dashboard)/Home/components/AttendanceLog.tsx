@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { attendanceLogService } from "@/utils/attendanceLogService";
 import { attendanceHistoryService } from "@/utils/attendanceHistoryService";
+import { metricsService } from "@/utils/metricsService";
 
 interface AttendanceEntry {
   fullName: string;
@@ -34,49 +35,39 @@ export default function AttendanceLog({
   refreshTrigger,
   onAttendanceRemoved,
 }: AttendanceLogProps) {
-  // Initialize currentDate with time set to midnight
   const [currentDate, setCurrentDate] = useState(new Date());
-
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations("AttendanceLog");
   const f = useFormatter();
 
-  useEffect(() => {
-    attendanceHistoryService.invalidateCache();
-    fetchAttendanceData(currentDate);
-  }, [currentDate, refreshTrigger]);
-
-  const fetchAttendanceData = async (date: Date) => {
+  const fetchAttendanceData = useCallback(async () => {
     try {
-      const presentStudents = await attendanceLogService.getDailyAttendance(
-        date
-      );
-      if (presentStudents.length === 0) {
-        setAttendanceData([]);
-        return;
-      }
-      // Batch fetch all totals
-      const studentIds = presentStudents.map((student) => student.id);
-      setIsLoading(true);
-      const totals = await attendanceLogService.getTotalAttendances(studentIds);
-      const formattedData: AttendanceEntry[] = presentStudents.map(
-        (student) => ({
-          ...student,
-          totalAttendance: totals[student.id] || 1,
-        })
-      );
+      const [daily, totals] = await Promise.all([
+        attendanceLogService.getDailyAttendance(currentDate),
+        attendanceLogService.getTotalAttendances(
+          (
+            await attendanceLogService.getDailyAttendance(currentDate)
+          ).map((entry) => entry.id)
+        ),
+      ]);
 
-      setAttendanceData(formattedData);
-      setIsLoading(false);
+      const enrichedData = daily.map((entry) => ({
+        ...entry,
+        totalAttendance: totals[entry.id] || 1,
+        dailyAttendance: entry.dailyAttendance,
+      }));
+
+      setAttendanceData(enrichedData);
     } catch (error) {
       console.error("Error fetching attendance data:", error);
+      toast({ title: t("errorLoadingData"), variant: "destructive" });
     }
-  };
+  }, [currentDate, t]);
 
   const isNewStudent = (createdAt: string) => {
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     return new Date(createdAt) >= oneWeekAgo;
   };
 
@@ -88,13 +79,6 @@ export default function AttendanceLog({
     });
   };
 
-  // const formatDate = t("dateFormat", {
-  //   date: currentDate,
-  //   weekday: "",
-  //   day: "none",
-  //   month: "long",
-  // });
-
   // Update handleRemoveAttendance
   const handleRemoveAttendance = async (studentId: string) => {
     try {
@@ -102,7 +86,6 @@ export default function AttendanceLog({
       setAttendanceData((prev) =>
         prev.filter((entry) => entry.id !== studentId)
       );
-      attendanceHistoryService.invalidateCache();
       await attendanceLogService.removeAttendance(studentId, currentDate);
       toast({
         title: t("attendanceRemoved"),
@@ -111,12 +94,14 @@ export default function AttendanceLog({
       });
       setTimeout(() => {
         attendanceLogService.invalidateCache(undefined, currentDate);
-        fetchAttendanceData(currentDate); // Silent background refresh
+        metricsService.invalidateCache();
+        attendanceHistoryService.invalidateCache();
+        fetchAttendanceData(); // Silent background refresh
         onAttendanceRemoved();
       }, 1000);
     } catch (error) {
       console.error("Error removing attendance:", error);
-      fetchAttendanceData(currentDate);
+      fetchAttendanceData();
       toast({
         title: t("errorRemovingAttendance"),
         description: t("errorRemovingAttendanceDescription"),
@@ -124,6 +109,11 @@ export default function AttendanceLog({
       });
     }
   };
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetchAttendanceData().finally(() => setIsLoading(false));
+  }, [refreshTrigger, fetchAttendanceData, currentDate]);
 
   return (
     <Card className="flex flex-col bg-background w-full h-[300px] overflow-hidden">

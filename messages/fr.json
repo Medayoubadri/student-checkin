@@ -26,6 +26,8 @@
     "selectGender": "Sélectionner le Sexe",
     "Male": "Masculin",
     "Female": "Féminin",
+    "metrics-toastitle-error": "Erreur lors de la récupération des données",
+    "metrics-toasdescription-error": "Une erreur est survenue lors de la récupération des données. Veuillez rafraîchir la page.",
     "startTypingStudentName": "Taper le nom de l'étudiant...",
     "checkInSuccess-Title": "Enregistrement réussi",
     "checkInSuccess-Description": "L'étudiant a été enregistré avec succès.",

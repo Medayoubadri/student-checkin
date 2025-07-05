@@ -26,6 +26,8 @@
     "selectGender": "Select gender",
     "Male": "Male",
     "Female": "Female",
+    "metrics-toastitle-error": "Error fetching data records",
+    "metrics-toasdescription-error": "An error occurred while fetching data records. Please try refreshing the page.",
     "startTypingStudentName": "Start typing student name...",
     "checkInSuccess-Title": "Check-in Successful",
     "checkInSuccess-Description": "Student has been checked in successfully.",

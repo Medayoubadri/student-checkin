@@ -121,10 +121,11 @@ export function StudentCheckIn({
             title: t("checkInSuccess-Title"),
             description: t("checkInSuccess-Description"),
           });
-          attendanceLogService.invalidateCache(undefined, new Date());
-          refreshRecentActivity();
-          setName("");
           onCheckIn();
+          refreshRecentActivity();
+          attendanceLogService.invalidateCache(undefined, new Date());
+          attendanceLogService.invalidateTotalCache();
+          setName("");
           break;
         case 201:
           toast({
@@ -134,16 +135,6 @@ export function StudentCheckIn({
           });
           setName("");
           break;
-
-        case 500:
-          throw new Error(result.message);
-
-        default:
-          toast({
-            variant: "destructive",
-            title: t("checkInError-Title"),
-            description: result.message || t("checkInError-Description"),
-          });
       }
     } catch (error) {
       console.error("Error marking attendance:", error);
