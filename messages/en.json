@@ -203,7 +203,7 @@
   },
   "DownloadAttendance": {
     "reportTitle": "Attendance list of chess learners\n at the Médiathèque\nقائمة حضور متعلمي الشطرنج\nبالمكتبة الوسائطية",
-    "dateLabel": "Date: {date}",
+    "dateLabel": "Date:",
     "fullName": "Full Name",
     "age": "Age",
     "gender": "Gender",

@@ -196,7 +196,7 @@
   },
   "DownloadAttendance": {
     "reportTitle": "Liste de présence des apprenants\nd'échecs à la médiathèque\nقائمة حضور متعلمي الشطرنج\nبالمكتبة الوسائطية",
-    "dateLabel": "Date: {date}",
+    "dateLabel": "Date:",
     "fullName": "Nom complet",
     "age": "Âge",
     "gender": "Sexe",
