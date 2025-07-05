@@ -14,20 +14,30 @@ export async function GET() {
   }
 
   try {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 14);
+
     const attendanceData = await prisma.attendance.groupBy({
       by: ["date"],
+      where: {
+        date: {
+          gte: sevenDaysAgo,
+        },
+        student: {
+          userId: session.user.id,
+        },
+      },
       _count: {
-        studentId: true,
+        id: true,
       },
       orderBy: {
         date: "asc",
       },
-      take: 7, // Last 30 days
     });
 
     const formattedData = attendanceData.map((item) => ({
       date: item.date.toISOString().split("T")[0],
-      attendance: item._count.studentId,
+      attendance: item._count.id,
     }));
 
     return NextResponse.json(formattedData);

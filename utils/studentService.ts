@@ -2,7 +2,7 @@ import { Student } from "@/types/import";
 
 // utils/studentService.ts
 const STUDENT_CACHE_KEY = "students";
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+const CACHE_TTL = 60 * 120 * 1000; // 2 hours
 
 export const studentService = {
   async getStudents(): Promise<Student[]> {

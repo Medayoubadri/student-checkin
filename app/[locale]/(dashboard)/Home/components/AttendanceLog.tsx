@@ -36,9 +36,9 @@ export default function AttendanceLog({
 }: AttendanceLogProps) {
   // Initialize currentDate with time set to midnight
   const [currentDate, setCurrentDate] = useState(new Date());
-
+  console.log("Current date:", currentDate);
   const [attendanceData, setAttendanceData] = useState<AttendanceEntry[]>([]);
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations("AttendanceLog");
   const f = useFormatter();
 
@@ -58,6 +58,7 @@ export default function AttendanceLog({
       }
       // Batch fetch all totals
       const studentIds = presentStudents.map((student) => student.id);
+      setIsLoading(true);
       const totals = await attendanceLogService.getTotalAttendances(studentIds);
       const formattedData: AttendanceEntry[] = presentStudents.map(
         (student) => ({
@@ -67,6 +68,7 @@ export default function AttendanceLog({
       );
 
       setAttendanceData(formattedData);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching attendance data:", error);
     }
@@ -159,6 +161,7 @@ export default function AttendanceLog({
                         normalized.getTime() -
                           normalized.getTimezoneOffset() * 60000
                       );
+                      console.log("Selected date:", utcDate);
                       setCurrentDate(utcDate);
                       // Close the popover
                       const trigger = document.querySelector(

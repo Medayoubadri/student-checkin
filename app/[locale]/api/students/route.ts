@@ -67,7 +67,6 @@ export async function GET(request: Request) {
       // dateObj.setUTCHours(0, 0, 0, 0);
       const nextDay = new Date(dateObj);
       nextDay.setUTCDate(nextDay.getUTCDate() + 1);
-      console.log("Students Target Date:", dateObj);
 
       students = await prisma.student.findMany({
         where: {
