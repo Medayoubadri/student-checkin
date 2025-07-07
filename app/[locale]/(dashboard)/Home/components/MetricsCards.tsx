@@ -1,5 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCountAnimation } from "@/hooks/useCountAnimation";
+import {
+  CalendarDays,
+  ClipboardCheckIcon,
+  PercentIcon,
+  Users2Icon,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface Metrics {
@@ -27,8 +33,9 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
     <div className="gap-4 grid grid-cols-2 lg:grid-cols-4 w-full">
       <Card className="bg-background">
         <CardHeader className="p-4">
-          <CardTitle className="text-sm sm:text-base">
+          <CardTitle className="flex justify-between items-center text-sm sm:text-base">
             {t("totalStudents")}
+            <Users2Icon className="ml-2 w-6 h-6" />
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 pt-0">
@@ -39,8 +46,9 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
       </Card>
       <Card className="bg-background">
         <CardHeader className="p-4">
-          <CardTitle className="text-sm sm:text-base">
+          <CardTitle className="flex justify-between items-center text-sm sm:text-base">
             {t("todayAttendance")}
+            <CalendarDays className="ml-2 w-6 h-6" />
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 pt-0">
@@ -51,8 +59,9 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
       </Card>
       <Card className="hidden md:block bg-background">
         <CardHeader className="p-4">
-          <CardTitle className="text-sm sm:text-base">
+          <CardTitle className="flex justify-between items-center text-sm sm:text-base">
             {t("averageAttendance")}
+            <PercentIcon className="ml-2 w-6 h-6" />
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 pt-0">
@@ -63,8 +72,9 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
       </Card>
       <Card className="hidden md:block bg-background">
         <CardHeader className="p-4">
-          <CardTitle className="text-sm sm:text-base">
+          <CardTitle className="flex justify-between items-center text-sm sm:text-base">
             {t("totalAttendance")}
+            <ClipboardCheckIcon className="ml-2 w-6 h-6" />
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 pt-0">

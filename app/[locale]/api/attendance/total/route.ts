@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
+// GET request for fetching total attendance count
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
 

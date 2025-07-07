@@ -17,15 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
-
-interface Student {
-  id: string;
-  name: string;
-  age: number;
-  gender: string;
-  phoneNumber: string;
-  createdAt: string;
-}
+import { Student } from "@/types/import";
 
 interface EditStudentModalProps {
   student: Student | null;
@@ -64,6 +56,7 @@ export function EditStudentModal({
         age: Number.parseInt(age),
         gender,
         phoneNumber,
+        image: student.image,
       });
     }
     onClose();

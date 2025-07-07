@@ -18,6 +18,9 @@ export interface Student {
   age: number;
   gender: string;
   phoneNumber: string;
+  image: string;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface ImportProgress {
