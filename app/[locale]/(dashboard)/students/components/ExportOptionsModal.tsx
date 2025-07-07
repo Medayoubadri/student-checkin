@@ -16,6 +16,9 @@ interface ExportOptionsModalProps {
   onClose: () => void;
 }
 
+// ExportOptionsModal component for selecting export options
+// This component is a modal dialog that allows the user to select the file format for exporting student data
+// It provides options for CSV and Excel (XLSX) formats
 export function ExportOptionsModal({
   isOpen,
   onClose,

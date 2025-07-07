@@ -12,6 +12,8 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
+// UserNav component for the dashboard layout
+// This component is responsible for rendering the user navigation menu
 export function UserNav() {
   const { data: session } = useSession();
   const router = useRouter();

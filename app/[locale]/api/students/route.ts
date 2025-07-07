@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
+// Creates a new student record with provided details and associates it with the current user
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
 
@@ -36,6 +37,7 @@ export async function POST(request: Request) {
   }
 }
 
+// Retrieves students with optional filtering by name or date, including their most recent attendance
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
 
@@ -123,6 +125,7 @@ export async function GET(request: Request) {
   }
 }
 
+// Updates an existing student's information after checking for name uniqueness
 export async function PUT(request: Request) {
   const session = await getServerSession(authOptions);
 
@@ -163,6 +166,7 @@ export async function PUT(request: Request) {
   }
 }
 
+// Removes a student and all their associated attendance records
 export async function DELETE(request: Request) {
   const session = await getServerSession(authOptions);
 

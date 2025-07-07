@@ -14,6 +14,7 @@ interface CalendarButtonProps {
   selectedDate: Date | null;
 }
 
+// This component renders a button that opens a calendar popover
 export function CalendarButton({
   onDateSelect,
   selectedDate,

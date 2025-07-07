@@ -1,4 +1,6 @@
 // app/services/attendanceHistoryService.ts
+
+// Service for managing historical attendance data with caching
 const HISTORY_CACHE_KEY = "attendance-history";
 const CACHE_TTL = 60 * 120 * 1000; // 2 hours
 
@@ -8,6 +10,7 @@ interface AttendanceData {
 }
 
 export const attendanceHistoryService = {
+  // Retrieves attendance history with cache support
   async getHistory(): Promise<AttendanceData[]> {
     const cached = localStorage.getItem(HISTORY_CACHE_KEY);
     if (cached) {
@@ -32,6 +35,7 @@ export const attendanceHistoryService = {
     return data;
   },
 
+  // Clears attendance history cache
   invalidateCache(): boolean {
     try {
       localStorage.removeItem(HISTORY_CACHE_KEY);

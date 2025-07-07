@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 
+// Custom hook for animating a count value from a start to an end value over a specified duration
 export function useCountAnimation(end: number, duration = 1000, start = 0) {
   const [count, setCount] = useState(start);
 

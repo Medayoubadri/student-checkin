@@ -1,12 +1,14 @@
 // app/[locale]/(dashboard)/layout.tsx
 import type React from "react";
-import Header from "@/components/header";
+import Header from "@/app/[locale]/(dashboard)/_components/header";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
-import { AppSidebar } from "@/components/SideBar";
+import { AppSidebar } from "@/app/[locale]/(dashboard)/_components/SideBar";
 
+// This is a layout for the dashboard. It includes the sidebar and header.
+// It also checks if the user is authenticated. If not, it redirects to the sign-in page.
 export default async function DashboardLayout({
   children,
   params,
@@ -24,7 +26,6 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider>
       <div className="relative flex bg-gradient-to-tr from-slate-100 dark:from-zinc-900 to-indigo-100 dark:to-gray-950 w-full h-screen overflow-y-hidden">
-        {/* <MainNav /> */}
         <AppSidebar />
         <header className="top-0 right-0 left-0 z-10 fixed">
           <Header />

@@ -1,6 +1,7 @@
 import { saveAs } from "file-saver";
 import { toast } from "@/hooks/use-toast";
 
+// Handles the export of student data to CSV or XLSX format with success/error notifications
 export async function exportStudents(fileFormat: "csv" | "xlsx") {
   try {
     const response = await fetch(`/api/export?format=${fileFormat}`);

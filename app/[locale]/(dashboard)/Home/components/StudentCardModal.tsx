@@ -48,6 +48,9 @@ interface StudentCardModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+// StudentCardModal component for displaying and editing student information
+// This component fetches student data, displays it in a modal, and allows the user to edit the student's details
+// It also includes a tabbed interface for viewing attendance summary and history
 export function StudentCardModal({
   studentId,
   open,
@@ -66,6 +69,8 @@ export function StudentCardModal({
   const t = useTranslations("StudentCardModal");
   const format = useFormatter();
 
+  // Fetch student data and attendance history when the modal opens or studentId changes
+  // This effect runs when the modal opens and fetches the student data and attendance history
   useEffect(() => {
     if (open && studentId) {
       const fetchStudentData = async () => {
@@ -92,7 +97,7 @@ export function StudentCardModal({
             setStudentData(studentData);
             setOriginalData(studentData);
 
-            // Fetch attendance history for the student using the new endpoint
+            // Fetch attendance history if the student is new
             try {
               const response = await fetch(
                 `/api/attendance/log?studentId=${studentId}`
@@ -124,10 +129,12 @@ export function StudentCardModal({
         }
       };
 
+      // Fetch student data when the modal opens
       fetchStudentData();
     }
   }, [studentId, open, t, totalAttendance]);
 
+  // This function updates the student data state when the user types in the input fields
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (studentData) {
@@ -135,12 +142,16 @@ export function StudentCardModal({
     }
   };
 
+  // This function handles the change in gender selection
   const handleGenderChange = (value: "male" | "female" | "") => {
     if (studentData) {
       setStudentData((prev) => (prev ? { ...prev, gender: value } : null));
     }
   };
 
+  // This function handles the save button click
+  // It sends the updated student data to the server and updates the local state
+  // It also invalidates the cache to ensure fresh data on the next load
   const handleSave = async () => {
     if (!studentData) return;
 
@@ -261,6 +272,7 @@ export function StudentCardModal({
   const stats = calculateAttendanceStats();
   const groupedAttendance = groupAttendanceByMonth();
 
+  // If loading or no student data, show a loading skeleton
   if (isLoading || !studentData) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -309,6 +321,7 @@ export function StudentCardModal({
     );
   }
 
+  // This modal displays the student's information and allows editing
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -332,17 +345,24 @@ export function StudentCardModal({
                       height={100}
                       className="object-cover"
                     />
-                  ) : (
-                    <User2Icon
-                      className={cn(
-                        "p-2 w-24 h-24",
-                        studentData.gender === "female"
-                          ? "text-rose-500"
-                          : studentData.gender === "male"
-                          ? "text-blue-800"
-                          : ""
-                      )}
+                  ) : studentData.gender === "female" ? (
+                    <Image
+                      src="/assets/female-avatar.jpg"
+                      alt="avatar"
+                      width={100}
+                      height={100}
+                      className="bg-muted object-cover"
                     />
+                  ) : studentData.gender === "male" ? (
+                    <Image
+                      src="/assets/male-avatar.jpg"
+                      alt="avatar"
+                      width={100}
+                      height={100}
+                      className="bg-muted object-cover"
+                    />
+                  ) : (
+                    <User2Icon className="bg-muted p-2 w-16 h-16" />
                   )}
                 </div>
                 <div className="sm:text-left text-center">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DownloadAttendance } from "./DownloadAttendance";
@@ -32,6 +32,10 @@ interface AttendanceLogProps {
   onAttendanceRemoved: () => void;
 }
 
+// AttendanceLog component for displaying and managing attendance records
+// This component fetches attendance data, displays it in a list, and allows the user to remove attendance records
+// It also includes a date picker for selecting the date of attendance records
+// The component uses a modal to display detailed information about a selected student
 export default function AttendanceLog({
   refreshTrigger,
   onAttendanceRemoved,
@@ -187,7 +191,7 @@ export default function AttendanceLog({
             <DownloadAttendance selectedDate={currentDate} />
           </div>
         </CardHeader>
-        <CardContent className="flex-grow px-6 overflow-y-auto">
+        <CardContent className="flex flex-col flex-grow gap-2 px-6 overflow-y-auto">
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3, 4].map((i) => (
@@ -200,13 +204,11 @@ export default function AttendanceLog({
           ) : attendanceData.length > 0 ? (
             attendanceData.map((entry, index) => (
               <div
+                onClick={() => handleStudentClick(entry)}
                 key={index}
-                className="flex justify-between items-center py-2 border-b border-border last:border-b-0"
+                className="flex justify-between items-center bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900/60 dark:hover:bg-zinc-950 px-2 py-2 rounded-md transition-colors cursor-pointer"
               >
-                <div
-                  className="flex items-center gap-4 hover:text-primary transition-colors cursor-pointer"
-                  onClick={() => handleStudentClick(entry)}
-                >
+                <div className="flex items-center gap-4">
                   <div
                     className={`w-2 h-2 rounded-full ${
                       isNewStudent(entry.createdAt)
@@ -228,7 +230,7 @@ export default function AttendanceLog({
                     }}
                     className="bg-transparent hover:bg-transparent shadow-none w-4 h-6 text-destructive hover:text-destructive/90 hover:text-red-500"
                   >
-                    <X className="!w-5 !h-5" />
+                    <Trash2Icon className="!w-5 !h-5" />
                     <span className="sr-only">{t("removeAttendance")}</span>
                   </Button>
                 </div>

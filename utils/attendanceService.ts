@@ -1,4 +1,6 @@
 // utils/attendanceService.ts
+
+// Service for managing real-time attendance with offline support
 const ATTENDANCE_CACHE_KEY = "attendance";
 
 interface AttendanceResponse {
@@ -6,7 +8,14 @@ interface AttendanceResponse {
   message: string;
 }
 
+interface AttendanceRecord {
+  studentId: string;
+  date: string;
+  synced: boolean;
+}
+
 export const attendanceService = {
+  // Records attendance with optimistic updates and server sync
   async markAttendance(studentId: string): Promise<AttendanceResponse> {
     // Update cache immediately
     const newAttendance = {
@@ -29,7 +38,7 @@ export const attendanceService = {
       });
       const data = await response.json();
       // Mark as synced
-      const updated = attendance.map((a: any) =>
+      const updated = attendance.map((a: AttendanceRecord) =>
         a === newAttendance ? { ...a, synced: true } : a
       );
       localStorage.setItem(ATTENDANCE_CACHE_KEY, JSON.stringify(updated));
@@ -40,7 +49,8 @@ export const attendanceService = {
     }
   },
 
-  async getRecentAttendance(): Promise<any[]> {
+  // Retrieves recent attendance records from local cache
+  async getRecentAttendance(): Promise<AttendanceRecord[]> {
     // First check unsynced items
     const cached = localStorage.getItem(ATTENDANCE_CACHE_KEY);
     const localAttendance = cached ? JSON.parse(cached) : [];

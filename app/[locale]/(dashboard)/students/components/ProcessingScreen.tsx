@@ -13,11 +13,15 @@ const processingSteps = [
   "processingStep4",
 ];
 
+// ProcessingScreen component for displaying the processing status
+// This component shows a loading spinner, progress bar, and step indicators
+// It updates the progress and current step at regular intervals
 export function ProcessingScreen() {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const t = useTranslations("ProcessingScreen");
 
+  // Effect to handle the step and progress updates
   useEffect(() => {
     const stepInterval = setInterval(() => {
       setCurrentStep((prevStep) => (prevStep + 1) % processingSteps.length);
@@ -39,11 +43,12 @@ export function ProcessingScreen() {
     };
   }, []);
 
+  // Render the processing screen
   return (
     <div className="flex flex-col justify-center items-center space-y-8 mx-auto p-8 max-w-md">
       <div className="w-full">
         <Progress value={progress} className="w-full h-2" />
-        <p className="text-right mt-2 text-gray-500 text-sm">{progress}%</p>
+        <p className="mt-2 text-gray-500 text-sm text-right">{progress}%</p>
       </div>
 
       <div className="relative">
@@ -56,7 +61,7 @@ export function ProcessingScreen() {
       </div>
 
       <div className="space-y-2 text-center">
-        <p className="font-semibold text-lg text-primary">
+        <p className="font-semibold text-primary text-lg">
           {t(processingSteps[currentStep])}
         </p>
         <p className="text-gray-500 text-sm">{t("pleaseWait")}</p>

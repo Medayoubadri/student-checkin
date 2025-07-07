@@ -14,6 +14,10 @@ interface AttendanceChartProps {
   onDataUpdate: () => void;
 }
 
+// This component renders an attendance chart using Recharts
+// It takes in attendance data as props and displays it in an area chart format
+// The chart is responsive and adjusts its size based on the container
+// The chart also includes a custom tooltip for better data visualization
 export function AttendanceChart({ data }: AttendanceChartProps) {
   const t = useTranslations("AttendanceChart");
   return (
@@ -45,7 +49,6 @@ export function AttendanceChart({ data }: AttendanceChartProps) {
                 fill="url(#colorUv)"
                 name="Attendance"
                 isAnimationActive={true}
-                animationDuration={500}
               />
             </AreaChart>
           </ResponsiveContainer>

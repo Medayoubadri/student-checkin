@@ -15,6 +15,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Student } from "@/types/import";
 
+// StudentsPage component for managing student records
+// This component fetches student data, allows searching, editing, and deleting students
+// It also includes a date picker for filtering students by date
 export default function StudentsPage() {
   const { status } = useSession();
   const t = useTranslations("StudentsPage");
@@ -28,6 +31,8 @@ export default function StudentsPage() {
   const [studentsToDelete, setStudentsToDelete] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch students from the API
+  // This function handles the API call and updates the state with the fetched data
   const fetchStudents = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -51,6 +56,7 @@ export default function StudentsPage() {
     }
   }, [selectedDate]);
 
+  // Effect to fetch students when the component mounts or when the session status changes
   useEffect(() => {
     if (status === "authenticated") {
       fetchStudents();
@@ -65,27 +71,34 @@ export default function StudentsPage() {
     );
   }
 
+  // This function resets the search term to an empty string
   const handleClearSearch = () => {
     setSearchTerm("");
   };
 
+  // This function handles the search input change
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
+  // This function handles the date selection from the calendar
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date || null);
   };
 
+  // This function clears the selected date
   const clearSelectedDate = () => {
     setSelectedDate(null);
   };
 
+  // This function handles the edit action for a student
   const handleEdit = (student: Student) => {
     setEditingStudent(student);
     setIsEditModalOpen(true);
   };
 
+  // This function handles the save action for editing a student
+  // It sends the updated student data to the API and updates the state
   const handleSaveEdit = async (updatedStudent: Student) => {
     try {
       const response = await fetch(`/api/students`, {
@@ -128,16 +141,22 @@ export default function StudentsPage() {
     }
   };
 
+  // This function handles the delete action for a student
+  // It sets the student ID to be deleted and opens the delete confirmation dialog
   const handleDelete = async (studentId: string) => {
     setStudentsToDelete([studentId]);
     setIsDeleteDialogOpen(true);
   };
 
+  // This function handles the bulk delete action for multiple students
+  // It sets the student IDs to be deleted and opens the delete confirmation dialog
   const handleBulkDelete = (studentIds: string[]) => {
     setStudentsToDelete(studentIds);
     setIsDeleteDialogOpen(true);
   };
 
+  // This function handles the confirmation of the delete action
+  // It sends the delete request to the API and updates the state
   const handleConfirmDelete = async () => {
     try {
       const deletePromises = studentsToDelete.map((id) =>

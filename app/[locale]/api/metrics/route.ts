@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
-// GET request for fetching student metrics 
+// Retrieves attendance metrics including total students, today's attendance, and average attendance rate
 export async function GET() {
   const session = await getServerSession(authOptions);
 

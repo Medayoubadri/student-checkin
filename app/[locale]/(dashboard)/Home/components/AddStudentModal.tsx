@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
 
+// Interface props for the NewStudentModal component
 interface NewStudentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -31,6 +32,8 @@ interface NewStudentModalProps {
   isLoading: boolean;
 }
 
+// NewStudentModal component for adding a new student
+// This component is a modal dialog that allows the user to input student details
 export function NewStudentModal({
   isOpen,
   onClose,

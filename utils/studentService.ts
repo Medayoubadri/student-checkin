@@ -1,10 +1,11 @@
 import { Student } from "@/types/import";
 
-// utils/studentService.ts
+// Service for managing student data with client-side caching
 const STUDENT_CACHE_KEY = "students";
 const CACHE_TTL = 60 * 120 * 1000; // 2 hours
 
 export const studentService = {
+  // Retrieves all students with cache support
   async getStudents(): Promise<Student[]> {
     // Check cache first
     const cached = localStorage.getItem(STUDENT_CACHE_KEY);
@@ -28,6 +29,7 @@ export const studentService = {
     return data;
   },
 
+  // Searches students by name using cached data
   async searchStudents(query: string): Promise<Student[]> {
     const students = await this.getStudents();
     return students.filter((student) =>
@@ -35,6 +37,7 @@ export const studentService = {
     );
   },
 
+  // Creates a new student and updates local cache
   async createStudent(student: Omit<Student, "id">): Promise<Student> {
     const response = await fetch("/api/students", {
       method: "POST",
@@ -59,6 +62,7 @@ export const studentService = {
     return newStudent;
   },
 
+  // Invalidates the student cache
   invalidateCache() {
     localStorage.removeItem(STUDENT_CACHE_KEY);
   },

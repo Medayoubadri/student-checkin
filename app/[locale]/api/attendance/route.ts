@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
-// POST request for recording attendance
+// Records student attendance for the current day, preventing duplicate entries
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
 

@@ -1,3 +1,5 @@
+// This is file is used to define the database schema for Prisma.
+// It is used to generate the Prisma Client and the database migrations.
 generator client {
   provider = "prisma-client-js"
 }

@@ -1,3 +1,4 @@
+// This file contains TypeScript interfaces and types for managing student data import operations.
 export interface ImportResult {
   totalRecords: number;
   cleanedRecords: number;
