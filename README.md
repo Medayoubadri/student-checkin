@@ -1,7 +1,7 @@
 # Students Attendance System
 
 <p align="center">
-  <img src="/public/Checkin-Mate-preview.png" alt="Checkin-Mate Preview" width="600"/>
+  <img src="/public/Checkin-Mate-preview.png" alt="Checkin-Mate Preview" width="800"/>
 </p>
 
 ## 🔥 Introduction
